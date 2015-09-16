@@ -17,6 +17,8 @@ class TableDict(object):
     def __getitem__(self, key):
         return getattr(self, key)
 
+    def set_current(self, period):
+        self.data['current'] = period
 
     def set_cell(self, row, period, value):
         if row not in self.data['allowed']:
@@ -65,7 +67,7 @@ class TableDict(object):
         _html = ''
         _html +='<tr><td>{}</td>'.format(row.upper())
         for t in xrange(1, self.data['num_periods']+1):
-            htmlclass=''
+            htmlclass='""'
             if t == self.data['current']:
                 htmlclass='current'
             elif t < self.data['current']:

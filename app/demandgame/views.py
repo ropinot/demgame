@@ -4,7 +4,7 @@ from flask import render_template, redirect, session
 from app.table import TableDict
 from flask.ext.login import login_required, login_user, logout_user,  current_user
 import sys
-
+import cPickle
 
 @app.route('/demandgame/dashboard', methods=['GET', 'POST'])
 @login_required
@@ -22,17 +22,21 @@ def demand_game_dashboard():
     if not gameboard:
         raise Exception('No gameboard found')
 
+    data = cPickle.loads(str(gameboard.table))
     current_period = gameboard.period
     gameboard.period += 1
-    gameboard.table.data['current'] = gameboard.period
-    gameboard.table.set_cell('order', 2, 1000)
+    data.set_current(gameboard.period)
+    data.set_cell('order', 2, 1000)
+
     if gameboard.period > scenario.duration:
         # finish the game
         pass
 
+    gameboard.table = cPickle.dumps(data)
     db.session.commit()
-    print gameboard.table.print_table()
+
+    # print gameboard.table.print_table()
     return render_template('demandgame/dashboard.html',
-                            table=gameboard.table.get_HTML(),
-                            period=gameboard.period)
+                            table=data.get_HTML(),
+                            period=data['current'])
 

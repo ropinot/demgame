@@ -8,6 +8,7 @@ from sqlalchemy import and_, func
 from app.demandgame import views
 from app.table import TableDict
 
+import cPickle
 
 @app.route('/')
 @app.route('/index')
@@ -94,7 +95,7 @@ def enter_game_code_view():
             #init the gameboard
             gameboard = GameBoard()
             gameboard.period = 1
-            gameboard.table = TableDict(scenario.duration)
+            gameboard.table = cPickle.dumps(TableDict(scenario.duration))
 
             player.gameboards.append(gameboard)
             scenario.gameboards.append(gameboard)
