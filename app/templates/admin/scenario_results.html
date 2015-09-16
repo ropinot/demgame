@@ -1,0 +1,23 @@
+{% extends "admin/base_admin.html" %}
+
+{% block body %}
+    <center><h3>Ranking for scenario "{{ scenario_name }}" ({{scenario_code}})</h3></center>
+        <br/>
+
+    <div style="width:50%;margin:0 auto;text-align: center;">
+        <ul>
+        {% for r, v in ranking.iteritems() %}
+            <a style="text-decoration: none" href="/admin/show_results/{{scenario_code}}/{{v.player_id}}">
+                <li class="list-group-item list-group-item-success">
+                    <table width="100%">
+                        <tr>
+                            <td align="left"><h3>{{ r+1 }}) {{ v.login }}</h3></td>
+                            <td align="right"><h3>{{ v.profit }}</h3></td>
+                        </tr>
+                    </table>
+                </li>
+            </a>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

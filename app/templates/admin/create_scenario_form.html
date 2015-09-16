@@ -1,0 +1,363 @@
+{% extends "admin/base_admin.html" %}
+
+{% block body %}
+
+    <h3><center>Create new scenario</center></h3>
+        <center><form method="POST" action="">
+            {{ form.hidden_tag() }}
+            {{ form.crsf_token }}
+            <table cellpadding="10" cellspacing="10" class="table">
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Scenario name
+                    </td>
+                    <td>
+                        {{ form.name(size=20, style='text-align:center') }}
+                        {% for error in form.name.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Period duration in seconds
+                    </td>
+                    <td colspan="2">
+                        {{ form.duration(size=5, style='text-align:center')}}
+                        Total duration (52 periods) = <span id="total_duration">00:00:00</span>
+                        {% for error in form.duration.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <!--<td>Total duration in hh:mm:ss = <span id="total_duration">00:00:00</span></td>-->
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Status of economy
+                    </td>
+                    <td colspan="2">
+                        {% if 'economy_status' in form %}
+                            {{ form.economy_status }}
+                        {% else %}
+                            {{ current_economy_status}}
+                        {% endif %}
+                        {% for error in form.economy_status.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <!--<td>Total duration in hh:mm:ss = <span id="total_duration">00:00:00</span></td>-->
+                </tr>
+                <tr>
+
+                    <td>&nbsp;</td>
+                    <td>Order cost</td>
+                    <td>
+                        {{ form.order_cost(size=5, style='text-align:center') }} €/order
+                        {% for error in form.order_cost.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Unit selling price and salvage value Hoodie
+                    </td>
+                    <td>
+                        Price {{ form.selling_price_hoodie(size=5, style='text-align:center') }} €
+                        {% for error in form.selling_price_hoodie.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        Salvage value {{ form.salvage_value_hoodie(size=5, style='text-align:center') }} €
+                        {% for error in form.salvage_value_hoodie.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Unit selling price and salvage value Trendy
+                    </td>
+                    <td>
+                        Price {{ form.selling_price_trendy(size=5, style='text-align:center')}} €
+                        {% for error in form.selling_price_trendy.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        Salvage value {{ form.salvage_value_trendy(size=5, style='text-align:center') }} €
+                        {% for error in form.salvage_value_trendy.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <!-- SUPPLIER DATA -->
+                <tr>
+                    <td>
+                        <strong>Supplier BR</strong><br/>
+                        Production rate<br/>
+                        {{ form.supp_BR_production_rate(size=10, style='text-align:center') }} units/week
+                        {% for error in form.supp_BR_production_rate.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Hoodie<br/>
+                        {{ form.supp_BR_price_hoodie(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_BR_price_hoodie.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Trendy<br/>
+                        {{ form.supp_BR_price_trendy(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_BR_price_trendy.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        End capacity in period<br/>
+                        {{ form.supp_BR_end_capacity(size=5, style='text-align:center') }}
+                        {% for error in form.supp_BR_end_capacity.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        Cancel penalty<br/>(% of wholesale price)<br/>
+                        {{ form.supp_BR_cancel_penalty(size=5, style='text-align:center') }} %
+                        {% for error in form.supp_BR_cancel_penalty.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+
+                    </td>
+                    <td>
+                        <strong>Supplier CH</strong><br/>
+                        Production rate<br/>
+                        {{ form.supp_CH_production_rate(size=10, style='text-align:center') }} units/week
+                        {% for error in form.supp_CH_production_rate.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Hoodie<br/>
+                        {{ form.supp_CH_price_hoodie(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_CH_price_hoodie.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Trendy<br/>
+                        {{ form.supp_CH_price_trendy(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_CH_price_trendy.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        End capacity in period<br/>
+                        {{ form.supp_CH_end_capacity(size=5, style='text-align:center') }}
+                        {% for error in form.supp_CH_end_capacity.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        Cancel penalty<br/>(% of wholesale price)<br/>
+                        {{ form.supp_CH_cancel_penalty(size=5, style='text-align:center') }} %
+                        {% for error in form.supp_CH_cancel_penalty.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+
+                    </td>
+                    <td>
+                        <strong>Supplier EU</strong><br/>
+                        Production rate<br/>
+                        {{ form.supp_EU_production_rate(size=10, style='text-align:center') }} units/week
+                        {% for error in form.supp_EU_production_rate.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Hoodie<br/>
+                        {{ form.supp_EU_price_hoodie(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_EU_price_hoodie.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Trendy<br/>
+                        {{ form.supp_EU_price_trendy(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_EU_price_trendy.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        End capacity in period<br/>
+                        {{ form.supp_EU_end_capacity(size=5, style='text-align:center') }}
+                        {% for error in form.supp_EU_end_capacity.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        Cancel penalty<br/>(% of wholesale price)<br/>
+                        {{ form.supp_EU_cancel_penalty(size=5, style='text-align:center') }} %
+                        {% for error in form.supp_EU_cancel_penalty.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+
+                    </td>
+                    <td>
+                        <strong>Supplier US</strong><br/>
+                        Production rate<br/>
+                        {{ form.supp_US_production_rate(size=10, style='text-align:center') }} units/week
+                        {% for error in form.supp_US_production_rate.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Hoodie<br/>
+                        {{ form.supp_US_price_hoodie(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_US_price_hoodie.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+                        Wholesale unit price Trendy<br/>
+                        {{ form.supp_US_price_trendy(size=5, style='text-align:center') }} €
+                        {% for error in form.supp_US_price_trendy.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        End capacity in period<br/>
+                        {{ form.supp_US_end_capacity(size=5, style='text-align:center') }}
+                        {% for error in form.supp_US_end_capacity.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <br/>
+
+                        Cancel penalty<br/>(% of wholesale price)<br/>
+                        {{ form.supp_US_cancel_penalty(size=5, style='text-align:center') }} %
+                        {% for error in form.supp_US_cancel_penalty.errors %}
+                        <br/>
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Goodwill cost Hoodie (as % of selling price)
+                        <table align="center">
+                            <tr>
+                                {% for r in range(1, 13) %}
+                                <td align="center">
+                                    P{{r}}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                {% set a = 'goodwill_cost_hoodie_PX' %}
+                                {% for r in range(1, 13) %}
+                                <td>
+                                    {{ form[a|replace('X', r)](size=5, style='text-align:center') }}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Goodwill cost Trendy (as % of selling price)
+                        <table align="center">
+                            <tr>
+                                {% for r in range(1, 13) %}
+                                <td align="center">
+                                    P{{r}}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                {% set a = 'goodwill_cost_trendy_PX' %}
+                                {% for r in range(1, 13) %}
+                                <td>
+                                    {{ form[a|replace('X', r)](size=5, style='text-align:center') }}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="4" align="center">
+                        {% if action == "Create" %}
+                            <button type="submit" class="btn btn-default">Create</button>
+                            <button type="reset" class="btn btn-default">Reset</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-default">Update</button>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-default" formaction="/admin/home">Home</button>
+                    </td>
+                </tr>
+            </table>
+        </form></center>
+
+<script>
+
+function get_total_duration(){
+    var duration = parseInt($('input[name=duration]').val());
+
+    if(!duration)
+        {
+        $('#total_duration').text('00:00:00');
+        return 1
+        }
+    var tot_duration = duration * 52;
+    var hours = parseInt(tot_duration / 3600);
+    var remainder = parseInt(tot_duration - (3600 * hours));
+    var minutes = parseInt(remainder / 60);
+    var seconds = parseInt(remainder - minutes * 60);
+    $('#total_duration').text(hours+':'+minutes+':'+seconds);
+}
+
+$(document).ready(function() {
+    //this first call required to update the field
+    //when editing the scenario
+    get_total_duration();
+
+    $('input[name=duration]').change(function(){
+            get_total_duration();
+        });
+});
+
+</script>
+
+{% endblock %}

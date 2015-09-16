@@ -88,6 +88,8 @@ class Scenario(db.Model):
     __tablename__ = 'scenarios'
 
     id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(15))
+    code = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(50))
     duration = db.Column(db.Integer)    #number of periods in the game
     leadtime = db.Column(db.Integer)

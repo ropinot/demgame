@@ -1,0 +1,18 @@
+{% extends "admin/base_admin.html" %}
+
+{% block body %}
+    <h3><center>General data</center></h3>
+        {{ table_general | safe }}
+    <br/>
+    <h3><center>Suppliers data</center></h3>
+        {{ table_suppliers | safe }}
+    <br/>
+    <h3><center>Goodwill costs</center></h3>
+        {{ table_goodwill_cost | safe }}
+    <br/>
+    <h3><center>Demand data</center></h3>
+        {{ table_demand | safe }}
+    <hr/>
+<center><a class="btn btn-primary" href=" {{ url_for('list_scenario_view') }}">List scenario</a>
+<a class="btn btn-primary" href=" {{ url_for('admin_home_view') }}">Home</a></center><br/>
+{% endblock %}

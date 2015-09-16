@@ -1,0 +1,45 @@
+{% extends "admin/base_admin.html" %}
+
+{% block body %}
+<h3><center>Admin login</center></h3>
+        <center><form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <table class="table" style="width:40%">
+                <tr>
+                    <td>
+                        {{ form.login.label }}
+                    </td>
+                    <td>
+                        {{ form.login }}
+                        {% if form.login.errors %}
+                        <ul>
+                            {% for e in form.login.errors %}
+                            <li>{{ e }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.password.label }}
+                    </td>
+                    <td>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                        <ul>
+                            {% for e in form.password.errors %}
+                            <li>{{ e }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button type="submit" class="btn btn-default">Login </button>
+                    </td>
+                </tr>
+            </table>
+        </form></center>
+{% endblock %}

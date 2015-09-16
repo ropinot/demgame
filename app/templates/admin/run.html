@@ -1,0 +1,111 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_script %}
+<script type="text/javascript">
+            $(document).ready(
+                    function() {
+                        sse = new EventSource('/my_event_source/{{scenario_code}}');
+                        sse.onmessage = function(message) {
+                            var obj = JSON.parse(message.data);
+
+                            $('#counter').text(obj.counter);
+
+                            if(obj.completed == 1)
+                            {
+                                delete sse;
+                                alert("Simulation completed. Click Ok to go to the results!");
+                                window.location.href = '/admin/scenario_results/{{scenario_code}}';
+                                // enable the button to show the results
+                                //$("#show_results").attr('class', 'btn btn-primary');
+                            }
+                        }
+                    })
+
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row clearfix" style="background:#F9F9F9; border-radius: 15px;">
+        <div class="col-md-6 column">
+            <center><h3>Simulation control</h3>
+                {% if start_enabled == 1 %}
+                    <a href="{{ url_for('start_scenario', scenario_code=scenario_code) }}" role="button"  class="btn btn-primary">Start</a>
+                {% else %}
+                    <a href="{{ url_for('start_scenario', scenario_code=scenario_code) }}" role="button"  class="btn btn-primary disabled">Start</a>
+                {% endif %}
+
+
+                {% if pause_enabled == 1 %}
+                    <a href="{{ url_for('pause_scenario', scenario_code=scenario_code) }}" role="button"  class="btn btn-primary">Pause</a>
+                {% else %}
+                    <a href="{{ url_for('pause_scenario', scenario_code=scenario_code) }}" role="button"  class="btn btn-primary disabled">Pause</a>
+                {% endif %}
+
+
+                {% if resume_enabled == 1 %}
+                    <a href="{{ url_for('resume_scenario', scenario_code=scenario_code) }}" role="button"  class="btn btn-primary">Resume</a>
+                {% else %}
+                    <a href="{{ url_for('resume_scenario', scenario_code=scenario_code) }}" role="button"  class="btn btn-primary disabled">Resume</a>
+                {% endif %}
+
+
+                <div id="status">{{ status|safe }}</div>
+                <br/>
+                <h4>Week:
+                    <div id="counter"></div>
+                </h4>
+            </center>
+        </div>
+
+
+        <div class="col-md-6 column">
+            <center><h3>Players list</h3>
+                <div align=left style="width:60%">
+                    <ul id="player_list" class="list-group">
+                    </ul>
+                </div>
+            </center>
+<script>
+function poll_players( scenario_code ){
+    //alert(scenario_code);
+    //SAME FUNCTION DEFINED IN WAITING_PLAYERS.HTML
+    $.ajax({
+        url: "{{ url_for('poll_players') }}",
+        type: 'POST',
+        data: JSON.stringify({scenario_code : scenario_code}),
+        //headers = {'Content-type': 'application/json', 'Accept': 'text/plain'},
+        //dataType: 'json',
+        contentType: 'application/json;charset=UTF-8',
+        success: function(players){
+            $('#player_list').empty(),
+            $.each(players.players, function(k, val){
+                $('#player_list').append('<li class="list-group-item list-group-item-success">'+(k+1)+') '+val.login+'</li>')
+                })
+            },
+        error: function(){
+            $('#player_list').append('<li class="list-group-item">NO data</li>')
+            },
+        })
+}
+
+$(document).ready(function(){
+                poll_players({{ scenario_code }});
+                 });
+</script>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!--<a href="{{ url_for('not_implemented_yet_view') }}" id="show_results" role="button"  class="btn btn-primary disabled">Results</a>-->
+
+
+
+
+{% endblock %}

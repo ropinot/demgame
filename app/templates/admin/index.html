@@ -1,0 +1,30 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_script %}
+<script type="text/javascript">
+            $(document).ready(
+                    function() {
+                        sse = new EventSource('/my_event_source');
+                        sse.onmessage = function(message) {
+                            console.log('A message has arrived! ' + message.data);
+                            
+                            var obj = JSON.parse(message.data);
+                            
+                            $('#counter').text(obj.counter);
+                            $('#capacity').text(obj.US_cap);
+                            
+                         }
+                    })
+
+</script>
+{% endblock %}
+
+{% block body %}
+<div id="status">{{ status }}</div>
+<br/>
+Week:
+<div id="counter"></div>
+<br/>
+Warning: Stopping the simulation, it won't be possible to resume it. You must reset the simulation and start from the beginning.
+<!-- <div id="capacity"></div> -->
+{% endblock %}

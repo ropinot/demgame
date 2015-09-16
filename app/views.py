@@ -2,7 +2,9 @@ from app import app, db
 from flask import render_template, redirect, url_for, Response, session, request
 from flask.ext.login import login_required, login_user, logout_user,  current_user
 from forms import LoginForm, RegistrationForm, NewGameForm
-from app.models import Player, Role
+from app.models import Player, Role, Scenario
+from game_constants import *
+from sqlalchemy import and_, func
 
 
 @app.route('/')
@@ -70,13 +72,44 @@ def logout_view():
     return redirect(url_for('login_view'))
 
 
-@app.route('/newgame')
+@app.route('/newgame', methods=['GET', 'POST'])
 @login_required
 def enter_game_code_view():
-    return Response('Enter game code')
+    form = NewGameForm()
+    if form.validate_on_submit():
+        # get the id of the scenario corresponding to the code
+        scenario = db.session.query(Scenario).filter(and_(Scenario.code == form.code.data,
+                                                          Scenario.status == ACTIVE)).first()
+        if scenario:  # the code is valid
+            player = db.session.query(Player).get(current_user.get_id())
+            player.played_scenario.append(scenario)
+            #player.notified = NO
+            # db.session.add(player)
+            db.session.commit()
+            session['scenario_id'] = scenario.id
+            session['scenario_code'] = scenario.code
+
+            scenario = Scenario.query.get(scenario.id)
+
+            db.session.commit()
+
+            #return render_template("dashboard.html", scenario_code=session['scenario_code'])
+            return redirect(url_for('play_view'))
+        else:
+            print 'no scenario found'
+            form = NewGameForm()
+            return render_template('new_game_form.html', form=form, message='Code not valid')
+
+    return render_template('new_game_form.html', form=form)
 
 
 @app.route('/listresults')
 @login_required
 def list_results_view():
     return Response('List results')
+
+
+@app.route('/play')
+@login_required
+def play_view():
+    return Response('play view')

@@ -1,0 +1,45 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_script %}
+
+
+<script>
+function poll_players( scenario_code ){
+    //alert(scenario_code);
+    //SAME FUNCTION DEFINED IN RUN.HTML
+    $.ajax({
+        url: "{{ url_for('poll_players') }}",
+        type: 'POST',
+        data: JSON.stringify({scenario_code : scenario_code}),
+        //headers = {'Content-type': 'application/json', 'Accept': 'text/plain'},
+        //dataType: 'json',
+        contentType: 'application/json;charset=UTF-8',
+        success: function(players){
+            $('#player_list').empty(),
+            $.each(players.players, function(k, val){
+                $('#player_list').append('<li class="list-group-item list-group-item-success">'+(k+1)+') '+val.login+'</li>')
+                })
+            },
+        error: function(){
+            $('#player_list').append('<li class="list-group-item">NO data</li>')
+            },
+        })
+}
+setInterval(function(){ poll_players({{ scenario_code }}); }, 2000)
+</script>
+
+{% endblock %}
+
+
+{% block body %}
+<center>
+<h3>Waiting for players!</h3>
+        <a href="{{ url_for('run_view', scenario_code=scenario_code) }}" class="btn btn-default" role="button" > Run scenario </a>
+        <a href="{{ url_for('list_scenario_view') }}" class="btn btn-default" role="button" > Scenario list </a>
+        <p> </p>
+    <div align=left style="width:40%">
+            <ul id="player_list" class="list-group">
+            </ul>
+    </div>
+</center>
+{% endblock %}

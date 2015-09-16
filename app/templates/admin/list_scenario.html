@@ -1,0 +1,85 @@
+{% extends "admin/base_admin.html" %}
+
+{% block body %}
+        <h4>List of scenario</h4>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Scenario name
+                    </th>
+                    <th align="center">
+                        Creation/Run dates
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Duration
+                    </th>
+                    <th>
+                        &nbsp;
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in scenario %}
+                <tr>
+                    <td>
+                        {{s.name}}
+                    </td>
+                    <td align="center">
+                        {% if s.creation_date %}
+                            <strong>C</strong>: {{s.creation_date.strftime("%d-%m-%Y - %H:%M")}}
+                        {% endif %}
+                        {% if s.run_date %}
+                            <br/><strong>R</strong>: {{s.run_date.strftime("%d-%m-%Y - %H:%M")}}
+                        {% endif %}
+                    </td>
+                    <td align="center">
+                        {{s.code}}
+                    </td>
+                    <td>
+                        {% if s.status == 'ACTIVE' %}
+                            <a href="{{ url_for('waiting_view', scenario_code=s.code) }}">{{s.status}}</a>
+                        {% elif s.status == 'RUNNING' %}
+                            <a href="{{ url_for('start_scenario', scenario_code=s.code) }}">{{s.status}}</a>
+                        {% elif s.status == 'PAUSED' %}
+                            <a href="{{ url_for('pause_scenario', scenario_code=s.code) }}">{{s.status}}</a>
+                        {% else %}
+                            {{s.status}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{s.duration}}
+                    </td>
+                    <td>
+                        {% if s.status == 'IDLE' %}
+                            <a class="btn btn-primary" role="button" href="{{ url_for('waiting_view', scenario_code=s.code)}}">Activate</a>
+                            <a class="btn btn-primary" role="button" href="{{ url_for('edit_scenario_view', scenario_code=s.code)}}">Edit</a>
+                            <a class="btn btn-primary" role="button" href="{{ url_for('not_implemented_yet_view')}}">Delete</a>
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('scenario_results_view', scenario_code=s.code)}}">Results</a>
+                        {% elif s.status == 'COMPLETED' %}
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('waiting_view', scenario_code=s.code)}}">Activate</a>
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('edit_scenario_view', scenario_code=s.code)}}">Edit</a>
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('not_implemented_yet_view')}}">Delete</a>
+                            <a class="btn btn-primary" role="button" href="{{ url_for('scenario_results_view', scenario_code=s.code)}}">Results</a>
+                        {% else %}
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('waiting_view', scenario_code=s.code)}}">Activate</a>
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('edit_scenario_view', scenario_code=s.code)}}">Edit</a>
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('not_implemented_yet_view')}}">Delete</a>
+                            <a class="btn btn-primary disabled" role="button" href="{{ url_for('scenario_results_view', scenario_code=s.code)}}">Results</a>
+                        {% endif %}
+                            <a class="btn btn-primary" role="button" href="{{ url_for('view_scenario_view', scenario_code=s.code)}}">View</a>
+                            <a class="btn btn-primary" role="button" href="{{ url_for('not_implemented_yet_view', scenario_code=s.code)}}">Duplicate</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+       </table>
+       <a class="btn btn-primary" href=" {{ url_for('admin_home_view') }}">Home </a>
+{% endblock %}
