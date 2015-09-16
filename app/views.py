@@ -34,7 +34,7 @@ def login_view():
             if scenario.status in [ACTIVE, RUNNING]:
                 session['scenario_code'] = scenario.code
                 session['scenario_id'] = scenario.id
-                return redirect(url_for('play_view'))
+                return redirect(url_for('demand_game_dashboard'))
 
         return redirect(url_for('player_home_view'))
     return render_template('login_form.html', form=form)
@@ -94,16 +94,12 @@ def enter_game_code_view():
             #init the gameboard
             gameboard = GameBoard()
             gameboard.period = 1
-            gameboard.current_user = 1
+            gameboard.table = TableDict(scenario.duration)
 
-            gameboard.data = TableDict(scenario.duration)
-
-            #print gameboard.data.get_HTML()
             player.gameboards.append(gameboard)
             scenario.gameboards.append(gameboard)
 
             db.session.add(gameboard)
-
             db.session.commit()
 
             return redirect(url_for('demand_game_dashboard'))

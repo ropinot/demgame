@@ -11,7 +11,7 @@ class GameBoard(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     period = db.Column(db.Integer)
-    data = db.Column(db.PickleType)      #string containing the pickled version of the TableDict
+    table = db.Column(db.PickleType)      #string containing the pickled version of the TableDict
 
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'))
     scenario_id = db.Column(db.Integer, db.ForeignKey('scenarios.id'))

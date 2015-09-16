@@ -4,32 +4,34 @@ import cPickle
 class TableDict(object):
     """A table stored as a dict of dicts"""
     def __init__(self, num_periods):
-        #super(Table, self).__init__()
-        self.num_periods = num_periods
         self.data = {}
+        self.data['num_periods'] = num_periods
         self.data['demand'] =  {t: 0 for t in xrange(1, num_periods+1)}
         self.data['stock'] =  {t: 0 for t in xrange(1, num_periods+1)}
         self.data['forecast'] =  {t: 0 for t in xrange(1, num_periods+2)}
         self.data['order'] =  {t: 0 for t in xrange(1, num_periods+1)}
         self.data['received'] =  {t: 0 for t in xrange(1, num_periods+1)}
-        self.allowed = ['demand', 'stock', 'forecast', 'order', 'received']
-        self.current_period = 1
+        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received']
+        self.data['current'] = 1
+
+    def __getitem__(self, key):
+        return getattr(self, key)
 
 
     def set_cell(self, row, period, value):
-        if row not in self.allowed:
+        if row not in self.data['allowed']:
             raise Exception('Row identifier not recognized')
 
-        if 0 < period <= self.num_periods:
+        if 0 < period <= self.data['num_periods']:
             self.data[row][period] = value
 
         return
 
     def get_cell(self, row, period):
-        if row not in self.allowed:
+        if row not in self.data['allowed']:
             raise Exception('Row identifier not recognized')
 
-        if 0 < period <= self.num_periods:
+        if 0 < period <= self.data['num_periods']:
             return self.data[row][period]
 
 
@@ -43,8 +45,8 @@ class TableDict(object):
 
     def get_HTML(self):
         html = '<table border=1 width=200%><tr><th width=8%>&nbsp;</th>'
-        for t in xrange(1, self.num_periods+1):
-            html += '<th width={}%>{}</th>'.format(92./self.num_periods, t)
+        for t in xrange(1, self.data['num_periods']+1):
+            html += '<th width={}%>{}</th>'.format(92./self.data['num_periods'], t)
         html +='</tr>'
 
         html += self.convert_row('stock')
@@ -58,20 +60,19 @@ class TableDict(object):
 
 
     def convert_row(self, row):
-        if row not in self.allowed:
+        if row not in self.data['allowed']:
             raise Exception('Row identifier not recognized')
         _html = ''
         _html +='<tr><td>{}</td>'.format(row.upper())
-        for t in xrange(1, self.num_periods+1):
+        for t in xrange(1, self.data['num_periods']+1):
             htmlclass=''
-            if t == self.current_period:
+            if t == self.data['current']:
                 htmlclass='current'
-            elif t < self.current_period:
+            elif t < self.data['current']:
                 htmlclass='past'
             _html += '<td align=right class={}>{}</td>'.format(htmlclass, self.get_cell(row, t))
         _html +='</tr>\n\r'
         return _html
-
 
 
 def main():
