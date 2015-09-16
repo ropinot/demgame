@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from app import db
-from app.models import Scenario
+from app.models import Scenario, ScenarioCode
 from app.game_constants import *
 from random import randint
 

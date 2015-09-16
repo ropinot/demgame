@@ -2,9 +2,11 @@ from app import app, db
 from flask import render_template, redirect, url_for, Response, session, request
 from flask.ext.login import login_required, login_user, logout_user,  current_user
 from forms import LoginForm, RegistrationForm, NewGameForm
-from app.models import Player, Role, Scenario
+from app.models import Player, Role, Scenario, GameBoard
 from game_constants import *
 from sqlalchemy import and_, func
+from app.demandgame import views
+from app.table import TableDict
 
 
 @app.route('/')
@@ -83,20 +85,29 @@ def enter_game_code_view():
         if scenario:  # the code is valid
             player = db.session.query(Player).get(current_user.get_id())
             player.played_scenario.append(scenario)
-            #player.notified = NO
-            # db.session.add(player)
             db.session.commit()
             session['scenario_id'] = scenario.id
             session['scenario_code'] = scenario.code
 
             scenario = Scenario.query.get(scenario.id)
 
+            #init the gameboard
+            gameboard = GameBoard()
+            gameboard.period = 1
+            gameboard.current_user = 1
+
+            gameboard.data = TableDict(scenario.duration)
+
+            #print gameboard.data.get_HTML()
+            player.gameboards.append(gameboard)
+            scenario.gameboards.append(gameboard)
+
+            db.session.add(gameboard)
+
             db.session.commit()
 
-            #return render_template("dashboard.html", scenario_code=session['scenario_code'])
-            return redirect(url_for('play_view'))
+            return redirect(url_for('demand_game_dashboard'))
         else:
-            print 'no scenario found'
             form = NewGameForm()
             return render_template('new_game_form.html', form=form, message='Code not valid')
 
@@ -107,12 +118,6 @@ def enter_game_code_view():
 @login_required
 def list_results_view():
     return Response('List results')
-
-
-@app.route('/play')
-@login_required
-def play_view():
-    return Response('play view')
 
 
 def has_no_empty_params(rule):

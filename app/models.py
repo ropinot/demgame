@@ -11,7 +11,7 @@ class GameBoard(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     period = db.Column(db.Integer)
-    tablestring = db.Column(db.PickleType)      #string containing the pickled version of the TableDict
+    data = db.Column(db.PickleType)      #string containing the pickled version of the TableDict
 
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'))
     scenario_id = db.Column(db.Integer, db.ForeignKey('scenarios.id'))
@@ -47,7 +47,8 @@ class Player(db.Model):
     played_scenario = db.relationship('Scenario', secondary=players_scenario,
                                    backref=db.backref('players', lazy='dynamic')) # this is used to connect the scenario to the players
 
-    #scenario = db.relationship('Scenario', backref='owner', lazy='dynamic') # this is used to connect the scenario to the admin, not for the players
+    scenario = db.relationship('Scenario', backref='owner', lazy='dynamic') # this is used to connect the scenario to the admin, not for the players
+
 
     # Flask-Login integration
     def is_authenticated(self):
@@ -96,9 +97,24 @@ class Scenario(db.Model):
     product_cost = db.Column(db.Float)
     stock_cost = db.Column(db.Float)
     lostsale_cost = db.Column(db.Float())
+    owner_id = db.Column(db.Integer, db.ForeignKey('players.id'))
+    creation_date = db.Column(db.DateTime)
+    activation_date = db.Column(db.DateTime)
+    run_date = db.Column(db.DateTime)
 
     gameboards = db.relationship('GameBoard', backref='scenario', lazy='dynamic')
     counters = db.relationship('ScenarioCounter', backref='scenario', lazy='dynamic')
+
+
+class ScenarioCode(db.Model):
+    """
+    Store the scenario codes already used
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer, unique=True)
+
+    def __init__(self, code):
+        self.code = code
 
 
 

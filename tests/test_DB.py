@@ -21,11 +21,9 @@ def teardown_func():
     app.config['WTF_CSRF_ENABLED'] = True
     app.config['CSRF_ENABLED'] = True
 
+
 @with_setup(setup_func, teardown_func)
 def test_DB():
-    T = TableDict(10)
-    T.set_cell('order', 5, 1000)
-    T.set_cell('forecast', 8, 10)
 
     player = Player()
     player.login = 'Pippo'
@@ -35,7 +33,14 @@ def test_DB():
     scenario.duration = 20
     gameboard = GameBoard()
     gameboard.period = 1
-    gameboard.data = T
+#    T = TableDict(10)
+#    T.set_cell('order', 5, 1000)
+#    T.set_cell('forecast', 8, 10)
+
+    gameboard.data = TableDict(10)
+    gameboard.data.set_cell('order', 5, 1000)
+    gameboard.data.set_cell('forecast', 8, 10)
+
     scenario_counter = ScenarioCounter()
 
     player.gameboards.append(gameboard)

@@ -13,7 +13,7 @@ class TableDict(object):
         self.data['order'] =  {t: 0 for t in xrange(1, num_periods+1)}
         self.data['received'] =  {t: 0 for t in xrange(1, num_periods+1)}
         self.allowed = ['demand', 'stock', 'forecast', 'order', 'received']
-        self.current_period = 0
+        self.current_period = 1
 
 
     def set_cell(self, row, period, value):

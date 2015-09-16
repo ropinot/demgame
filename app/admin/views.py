@@ -2,10 +2,12 @@
 from app import app, db
 from flask import render_template, Response, redirect, url_for, request, jsonify, session
 from flask.ext.login import login_user, logout_user, login_required, current_user
-from app.models import Scenario, Player, ScenarioCounter
+from app.models import Scenario, Player, ScenarioCounter, ScenarioCode
 from .forms import AdminLoginForm, CreateScenarioForm
 from app.game_constants import *
 from app.game_functions import admin_required
+from admin_functions import get_new_scenario_code
+from datetime import datetime
 
 
 @app.route('/admin')
@@ -25,7 +27,6 @@ def admin_login_view():
     return render_template('admin/admin_login_form.html', form=form)
 
 
-
 @app.route('/admin/logout')
 @login_required
 @admin_required
@@ -35,87 +36,32 @@ def admin_logout_view():
     return Response('<p align=center>Logged out<br/><br/><a href={}>Login again</a></p>'.format(url_for('admin_login_view')))
 
 
+@app.route('/admin/create_scenario', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def create_new_scenario_view():
+    form = CreateScenarioForm()
+    if form.validate_on_submit():
 
-# @app.route('/admin/create_scenario', methods=['GET', 'POST'])
-# @login_required
-# @admin_required
-# def create_new_scenario_view():
-#
-#     form = CreateScenarioForm()
-#     if form.validate_on_submit():
-#
-#         # form.owner_id = current_user.get_id()  # current_user is available only in a request
-#
-#         # save the scenario
-#         scenario = Scenario()
-#         form.populate_obj(scenario)
-#         scenario.owner_id = current_user.get_id()
-#         scenario.code = get_new_scenario_code()
-#         scenario.status = IDLE
-#         scenario.creation_date = datetime.now()
-#
-#         mu = MU[scenario.economy_status]
-#         sigma = SIGMA[scenario.economy_status]
-#         # demand_hoodie = gauss(mu, sigma)
-#         # demand_trendy = gauss(mu, sigma)
-#
-#         for supplier in SUPPLIERS:
-#             supp = Supplier()
-#             supp.name = supplier
-#             # supp.initial_capacity = form['supp_{}_capacity'.format(supplier)].data
-#             supp.production_rate = form['supp_{}_production_rate'.format(supplier)].data
-#             supp.current_capacity = supp.initial_capacity
-#             supp.wholesale_price_hoodie = form['supp_{}_price_hoodie'.format(supplier)].data
-#             supp.wholesale_price_trendy = form['supp_{}_price_trendy'.format(supplier)].data
-#             supp.end_capacity = form['supp_{}_end_capacity'.format(supplier)].data
-#             supp.cancel_penalty = form['supp_{}_cancel_penalty'.format(supplier)].data
-#             scenario.supplier.append(supp)
-#             db.session.add(supp)
-#
-#         # generate the true demand for the scenario
-#         scenario_demand_hoodie = ScenarioDemand()
-#         scenario_demand_hoodie.product_family = HOODIE
-#
-#         scenario_demand_trendy = ScenarioDemand()
-#         scenario_demand_trendy.product_family = TRENDY
-#
-#         # Each product has a normally distributed demand with the same parameters
-#         for t in xrange(1, 13):
-#             setattr(scenario_demand_hoodie, 'P{}'.format(t), gauss(mu, sigma))
-#             setattr(scenario_demand_trendy, 'P{}'.format(t), gauss(mu, sigma))
-#
-#
-#         # goodwill costs
-#         goodwillcost_hoodie = ProductGoodwillCost()
-#         goodwillcost_hoodie.product_family = HOODIE
-#
-#         goodwillcost_trendy = ProductGoodwillCost()
-#         goodwillcost_trendy.product_family = TRENDY
-#
-#         for p in PRODUCTS:
-#             setattr(goodwillcost_hoodie, p, form['goodwill_cost_hoodie_{}'.format(p)].data)
-#             setattr(goodwillcost_trendy, p, form['goodwill_cost_trendy_{}'.format(p)].data)
-#
-#         scenario.demand.append(scenario_demand_hoodie)
-#         scenario.demand.append(scenario_demand_trendy)
-#         scenario.goodwillcost.append(goodwillcost_hoodie)
-#         scenario.goodwillcost.append(goodwillcost_trendy)
-#         db.session.add(scenario)
-#         db.session.add(scenario_demand_hoodie)
-#         db.session.add(scenario_demand_trendy)
-#         db.session.add(goodwillcost_hoodie)
-#         db.session.add(goodwillcost_trendy)
-#         db.session.commit()
-#
-#         flash('Scenario saved successfully with code {}.'.format(scenario.owner_id))
-#
-#         # TODO: check the next parameter (?)
-#         # next = request.args.get('next')
-#         # if not next_is_valid(next):
-#         #     return abort(400)
-#
-#         return redirect(url_for('admin_home_view'))
-#     return render_template('admin/create_scenario_form.html', user=current_user, form=form, action="Create")
+        # save the scenario
+        scenario = Scenario()
+        form.populate_obj(scenario)
+        scenario.owner_id = current_user.get_id()
+        scenario.code = get_new_scenario_code()
+        scenario.status = IDLE
+        scenario.creation_date = datetime.now()
+
+        db.session.add(scenario)
+        db.session.commit()
+
+
+        # TODO: check the next parameter (?)
+        # next = request.args.get('next')
+        # if not next_is_valid(next):
+        #     return abort(400)
+
+        return redirect(url_for('admin_home_view'))
+    return render_template('admin/create_scenario_form.html', user=current_user, form=form, action="Create")
 #
 #
 # @app.route('/admin/edit_scenario/<scenario_code>', methods=['GET', 'POST'])
@@ -184,18 +130,30 @@ def admin_logout_view():
 #                            form=form,
 #                            action="Edit",
 #                            current_economy_status=current_economy_status)
-#
-#
-# @app.route('/admin/list_scenario')
-# @login_required
-# @admin_required
-# def list_scenario_view():
-#     player = Player.query.get(current_user.get_id())
-#     scenario = Scenario.query.filter_by(owner=player).order_by(Scenario.creation_date.desc())
-#     if scenario:
-#         return render_template('admin/list_scenario.html', user=current_user, scenario=scenario)
-#     else:
-#         return Response("<p>No scenario found</p>")
+
+
+@app.route('/admin/activate/<scenario_code>')
+@login_required
+@admin_required
+def activate(scenario_code):
+    scenario = Scenario.query.filter(Scenario.code == scenario_code).first()
+    if scenario:
+        scenario.status = ACTIVE
+        db.session.commit()
+        return redirect(url_for('list_scenario_view'))
+
+
+
+@app.route('/admin/list_scenario')
+@login_required
+@admin_required
+def list_scenario_view():
+    player = Player.query.get(current_user.get_id())
+    scenario = Scenario.query.filter_by(owner=player).order_by(Scenario.creation_date.desc())
+    if scenario:
+        return render_template('admin/list_scenario.html', user=current_user, scenario=scenario)
+    else:
+        return Response("<p>No scenario found</p>")
 #
 #
 # @app.route('/admin/view_scenario/<scenario_code>')
