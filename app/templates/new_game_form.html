@@ -1,0 +1,23 @@
+{% extends "baseall.html" %}
+
+{% block content %}
+<div style="width:50%;margin: 0 auto;">
+    {% if message %}
+        <center><h3>{{message}}</h3></center>
+        {% endif %}
+        <center>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <h3>Insert the game code<br/>provided by the instructor</h3><br/>
+                {{ form.code(size=10, style='text-align:center') }}
+                {% for error in form.code.errors %}
+                <br/>
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                <br/><br/>
+                <button type="submit" class="btn btn-default">&nbsp;Play&nbsp;</button>
+                <a href="/home" class="btn btn-default">Home</a>
+            </form>
+        </center>
+</div>
+{% endblock %}

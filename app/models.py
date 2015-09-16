@@ -23,6 +23,14 @@ class GameBoard(db.Model):
     # received = db.Column(db.Integer)    #ordered current - LT -1 periods ago
 
 
+class Role(db.Model):
+    __tablename__ = 'roles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    role = db.Column(db.String(50), unique=True)
+
+    players = db.relationship('Player', backref='role', lazy='dynamic')
+
 
 class Player(db.Model):
     """docstring for Player"""
@@ -30,6 +38,8 @@ class Player(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(50))
+    password = db.Column(db.String(100))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
     gameboards = db.relationship('GameBoard', backref='player', lazy='dynamic')
     scenario_counters = db.relationship('ScenarioCounter', backref='player', lazy='dynamic')
