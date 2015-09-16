@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-
 from app import db
 
-class Decision(db.Model):
-    """docstring for Decision"""
-    __tablename__ = 'decisions'
+players_scenario = db.Table('players_scenario',
+                            db.Column('player_id', db.Integer, db.ForeignKey('players.id')),
+                            db.Column('scenario_id', db.Integer, db.ForeignKey('scenarios.id')))
+
+class GameBoard(db.Model):
+    """docstring for GameBoard"""
+    __tablename__ = 'gameboards'
 
     id = db.Column(db.Integer, primary_key=True)
     period = db.Column(db.Integer)
-    stock = db.Column(db.Integer)       #at the beginning of the period
-    demand = db.Column(db.Integer)      #in the period
-    order = db.Column(db.Integer)       #during the period
-    forecast = db.Column(db.Integer)    #for the period
-    received = db.Column(db.Integer)    #ordered current - LT -1 periods ago
+    tablestring = db.Column(db.PickleType)      #string containing the pickled version of the TableDict
 
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'))
     scenario_id = db.Column(db.Integer, db.ForeignKey('scenarios.id'))
+
+    # stock = db.Column(db.Integer)       #at the beginning of the period
+    # demand = db.Column(db.Integer)      #in the period
+    # order = db.Column(db.Integer)       #during the period
+    # forecast = db.Column(db.Integer)    #for the period
+    # received = db.Column(db.Integer)    #ordered current - LT -1 periods ago
+
 
 
 class Player(db.Model):
@@ -24,8 +31,36 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(50))
 
-    decisions = db.relationship('Decision', backref='decisionmaker', lazy='dynamic')
+    gameboards = db.relationship('GameBoard', backref='player', lazy='dynamic')
     scenario_counters = db.relationship('ScenarioCounter', backref='player', lazy='dynamic')
+
+    played_scenario = db.relationship('Scenario', secondary=players_scenario,
+                                   backref=db.backref('players', lazy='dynamic')) # this is used to connect the scenario to the players
+
+    #scenario = db.relationship('Scenario', backref='owner', lazy='dynamic') # this is used to connect the scenario to the admin, not for the players
+
+    # Flask-Login integration
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
+
+    def get_role(self):
+        return unicode(self.role)
+
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.login
+
+    def __repr__(self):
+        return '<Player (%d) %r>' % (self.id, self.login)
 
 
 class ScenarioCounter(db.Model):
@@ -50,8 +85,8 @@ class Scenario(db.Model):
     stock_cost = db.Column(db.Float)
     lostsale_cost = db.Column(db.Float())
 
-    decisions = db.relationship('Decision', backref='scenario', lazy='dynamic')
-    scenario_counters = db.relationship('ScenarioCounter', backref='scenario', lazy='dynamic')
+    gameboards = db.relationship('GameBoard', backref='scenario', lazy='dynamic')
+    counters = db.relationship('ScenarioCounter', backref='scenario', lazy='dynamic')
 
 
 
