@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from sgapp import db
-from sgapp.models import Scenario, ScenarioCode
-from sgapp.game_constants import *
+from app import db
+from app.models import Scenario
+from app.game_constants import *
 from random import randint
 
 def set_scenario_status(scenario_id, status=""):

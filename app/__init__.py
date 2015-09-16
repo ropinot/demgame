@@ -19,5 +19,7 @@ def load_user(userid):
 
 
 from app import views
+from .admin import views, forms, admin_functions
 from .demandgame import views
 from models import *
+from game_functions import *

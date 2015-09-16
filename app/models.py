@@ -63,7 +63,7 @@ class Player(db.Model):
         return unicode(self.id)
 
     def get_role(self):
-        return unicode(self.role)
+        return unicode(self.role.role)
 
     # Required for administrative interface
     def __unicode__(self):
