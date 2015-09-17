@@ -101,10 +101,10 @@ class Scenario(db.Model):
     creation_date = db.Column(db.DateTime)
     activation_date = db.Column(db.DateTime)
     run_date = db.Column(db.DateTime)
+    demand_profile_id = db.Column(db.Integer, db.ForeignKey('demand_profiles.id'))
 
     gameboards = db.relationship('GameBoard', backref='scenario', lazy='dynamic')
     counters = db.relationship('ScenarioCounter', backref='scenario', lazy='dynamic')
-    demand_profile = db.relationship('DemandProfile', backref='scenario', lazy='dynamic')
 
 
 class ScenarioCode(db.Model):
@@ -123,8 +123,8 @@ class DemandProfile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    scenario_id = db.Column(db.Integer, db.ForeignKey('scenarios.id'))
 
+    scenarios = db.relationship('Scenario', backref='demand_profile', lazy='dynamic')
     data = db.relationship('DemandData', backref='demand_profile', lazy='dynamic')
 
 
@@ -135,8 +135,9 @@ class DemandData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     demand_profile_id = db.Column(db.Integer, db.ForeignKey('demand_profiles.id'))
     period = db.Column(db.Integer)
-    value = db.Column(db.Integer)
+    demand = db.Column(db.Integer)
     forecast = db.Column(db.Integer)
+    error = db.Column(db.Integer)
 
 
 

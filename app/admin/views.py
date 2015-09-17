@@ -2,7 +2,7 @@
 from app import app, db
 from flask import render_template, Response, redirect, url_for, request, jsonify, session
 from flask.ext.login import login_user, logout_user, login_required, current_user
-from app.models import Scenario, Player, ScenarioCounter, ScenarioCode
+from app.models import Scenario, Player, ScenarioCounter, ScenarioCode, DemandProfile, DemandData
 from .forms import AdminLoginForm, CreateScenarioForm
 from app.game_constants import *
 from app.game_functions import admin_required
@@ -425,11 +425,29 @@ def save_demand_profile():
     #2 = error
     #3 = forecast
     # forecast is recalculated because it doesn't come from the call
+    dp = DemandProfile()
+    db.session.add(dp)
+    db.session.commit()
+    # app.logger.info(request.json['data'][1])
+    # app.logger.info(request.json['data'][2])
+    # app.logger.info(request.json['data'][3])
+    demand = request.json['data'][1]
+    error = request.json['data'][2]
 
-    app.logger.info(request.json['data'][1])
-    app.logger.info(request.json['data'][2])
-    app.logger.info(request.json['data'][3])
+    for period, value in enumerate(demand):
+        if period == 0:
+            continue
+        if not value:
+            break
+        data = DemandData()
+        data.period = period
+        data.demand = value
+        data.error = error[period]
+        data.forecast = int(value) * (1+ int(error[period])/100.)
+        dp.data.append(data)
+        db.session.add(data)
 
+    db.session.commit()
     return jsonify(status=1)
 
 

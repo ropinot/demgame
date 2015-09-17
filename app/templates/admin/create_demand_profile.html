@@ -8,7 +8,7 @@
 
 {% block body %}
 <div id="demand_profile_grid"></div>
-
+<br/><br/>
 <center><button onclick='calculate_forecast()'> Show forecast </button>
 <button onclick="savedata()">Save</button></center>
 
@@ -32,7 +32,7 @@ $(document).ready(function (){
             //     // setDataAtCell(2, change[0][1], change[0][3]);
             // };
             // max num of columns
-            var num_cols = 30;
+            var num_cols = 1;
 
             var container = document.getElementById('demand_profile_grid');
 
@@ -75,7 +75,7 @@ $(document).ready(function (){
 
             // periods in the first row
             periods = [[]];
-            for (i=0; i < num_cols; i++)
+            for (i=0; i < 30; i++)
                 {
                 periods[0].push(i+1);
                 }
