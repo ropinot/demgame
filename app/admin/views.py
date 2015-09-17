@@ -132,6 +132,13 @@ def create_new_scenario_view():
 #                            current_economy_status=current_economy_status)
 
 
+@app.route('/admin/demandprofile')
+@login_required
+@admin_required
+def create_demand_profile():
+    return render_template('admin/create_demand_profile.html')
+
+
 @app.route('/admin/activate/<scenario_code>')
 @login_required
 @admin_required

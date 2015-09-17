@@ -35,7 +35,7 @@ def get_new_scenario_code():
     while True:
         code = db.session.query(ScenarioCode).filter_by(code=new_code).first()
         if not code:
-            new_scenario_code = ScenarioCode(code)
+            new_scenario_code = ScenarioCode()
             new_scenario_code.code = new_code
             db.session.add(new_scenario_code)
             db.session.commit()

@@ -3,6 +3,7 @@ from app.models import Player, Scenario, GameBoard
 from flask import render_template, redirect, session
 from app.table import TableDict
 from flask.ext.login import login_required, login_user, logout_user,  current_user
+from app.demandgame.forms import OrderForm
 import sys
 import cPickle
 
@@ -10,6 +11,7 @@ import cPickle
 @login_required
 def demand_game_dashboard():
     # get the currently played gameboard for the player
+    form = OrderForm()
     player = Player.query.get(current_user.get_id())
     if not player:
         raise Exception('No player found')
@@ -38,5 +40,6 @@ def demand_game_dashboard():
     # print gameboard.table.print_table()
     return render_template('demandgame/dashboard.html',
                             table=data.get_HTML(),
-                            period=data['current'])
+                            period=data.data['current'],
+                            form=form)
 

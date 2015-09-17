@@ -1,0 +1,57 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_script %}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.18.0/handsontable.full.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/handsontable/0.18.0/handsontable.full.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block body %}
+<div id="demand_profile_grid"></div>
+
+<script type="text/javascript">
+var data = [
+    ['Demand'],
+    ['Forecast'],
+    ['APE']
+];
+
+var container = document.getElementById('demand_profile_grid');
+var hot = new Handsontable(container, {
+            data: data,
+            minSpareCols: 30,
+            rowHeaders: false,
+            colHeaders: false,
+            contextMenu: false,
+            className: "htRight",
+            cell: [
+                    {row: 0, col: 0, className: 'htLeft'},
+                    {row: 1, col: 0, className: 'htLeft'},
+                    {row: 2, col: 0, className: 'htLeft'}
+                ]
+            });
+
+hot.updateSettings({
+        cells: function (row, col, prop)
+                {
+                    var cellProperties = {};
+                    if (hot.getData()[row][prop] === 'Demand' ||
+                        hot.getData()[row][prop] === 'APE' ||
+                        hot.getData()[row][prop] === 'Forecast')
+                        {
+                        cellProperties.editor = false;
+                        cellProperties.className = 'htLeft';
+                        }
+                    else
+                        {
+                        cellProperties.editor = 'text';
+                        cellProperties.format = 'numeric';
+                        cellProperties.className = 'htRight';
+                        }
+                    return cellProperties;
+                }
+            })
+
+
+</script>
+{% endblock %}

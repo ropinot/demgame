@@ -104,17 +104,44 @@ class Scenario(db.Model):
 
     gameboards = db.relationship('GameBoard', backref='scenario', lazy='dynamic')
     counters = db.relationship('ScenarioCounter', backref='scenario', lazy='dynamic')
+    demand_profile = db.relationship('DemandProfile', backref='scenario', lazy='dynamic')
 
 
 class ScenarioCode(db.Model):
     """
     Store the scenario codes already used
     """
+    __tablename__ = 'scenario_codes'
+
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.Integer, unique=True)
 
-    def __init__(self, code):
-        self.code = code
+
+class DemandProfile(db.Model):
+    """docstring for DemandProfile"""
+    __tablename__ = 'demand_profiles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    scenario_id = db.Column(db.Integer, db.ForeignKey('scenarios.id'))
+
+    data = db.relationship('DemandData', backref='demand_profile', lazy='dynamic')
+
+
+class DemandData(db.Model):
+    """docstring for DemandData"""
+
+    __tablename__ = 'demand_data'
+    id = db.Column(db.Integer, primary_key=True)
+    demand_profile_id = db.Column(db.Integer, db.ForeignKey('demand_profiles.id'))
+    period = db.Column(db.Integer)
+    value = db.Column(db.Integer)
+    forecast = db.Column(db.Integer)
+
+
+
+
+
 
 
 
