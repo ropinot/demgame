@@ -9,49 +9,128 @@
 {% block body %}
 <div id="demand_profile_grid"></div>
 
+<center><button onclick='calculate_forecast()'> Show forecast </button>
+<button onclick="savedata()">Save</button></center>
+
 <script type="text/javascript">
-var data = [
-    ['Demand'],
-    ['Forecast'],
-    ['APE']
-];
+// Main grid
+var hot;
 
-var container = document.getElementById('demand_profile_grid');
-var hot = new Handsontable(container, {
-            data: data,
-            minSpareCols: 30,
-            rowHeaders: false,
-            colHeaders: false,
-            contextMenu: false,
-            className: "htRight",
-            cell: [
-                    {row: 0, col: 0, className: 'htLeft'},
-                    {row: 1, col: 0, className: 'htLeft'},
-                    {row: 2, col: 0, className: 'htLeft'}
-                ]
-            });
+$(document).ready(function (){
+            // build the grid
+            // Rows' names
+            var data = [
+                ['Period'],
+                ['Demand'],
+                ['% Error'],
+                ['Forecast']
+            ];
 
-hot.updateSettings({
-        cells: function (row, col, prop)
+            // var afterChange = function(change,source){
+            //     console.log(new Date(),'afterChange fired. change:',change,'source:',source);
+            //     jQuery('#console').prepend('<span>afterChange fired. source:" '+source+'".'+new Date()+'</span><br>');
+            //     // setDataAtCell(2, change[0][1], change[0][3]);
+            // };
+            // max num of columns
+            var num_cols = 30;
+
+            var container = document.getElementById('demand_profile_grid');
+
+            hot = new Handsontable(container, {
+                        data: data,
+                        minSpareCols: num_cols,
+                        rowHeaders: false,
+                        colHeaders: false,
+                        contextMenu: false,
+                        });
+
+            // change the grid setting (alignment, types, editor...)
+            hot.updateSettings({
+                    cells: function (row, col, prop)
+                            {
+                                var cellProperties = {};
+                                if (hot.getData()[row][prop] === 'Demand' ||
+                                    hot.getData()[row][prop] === 'APE' ||
+                                    hot.getData()[row][prop] === 'Forecast' ||
+                                    hot.getData()[row][prop] === 'Period')
+                                    {
+                                    cellProperties.editor = false;
+                                    cellProperties.className = 'htLeft';
+                                    }
+                                else
+                                    {
+                                    data = 0;
+                                    cellProperties.editor = 'text';
+                                    cellProperties.type = 'numeric';
+                                    cellProperties.className = 'htRight';
+                                    }
+                                if(row === 0)
+                                    {
+                                    cellProperties.className = 'htCenter';
+                                    cellProperties.editor = false;
+                                    }
+                                return cellProperties;
+                            }
+                        })
+
+            // periods in the first row
+            periods = [[]];
+            for (i=0; i < num_cols; i++)
                 {
-                    var cellProperties = {};
-                    if (hot.getData()[row][prop] === 'Demand' ||
-                        hot.getData()[row][prop] === 'APE' ||
-                        hot.getData()[row][prop] === 'Forecast')
-                        {
-                        cellProperties.editor = false;
-                        cellProperties.className = 'htLeft';
-                        }
-                    else
-                        {
-                        cellProperties.editor = 'text';
-                        cellProperties.format = 'numeric';
-                        cellProperties.className = 'htRight';
-                        }
-                    return cellProperties;
+                periods[0].push(i+1);
                 }
-            })
+            hot.populateFromArray(0, 1, periods);
 
+});
+
+function get_data_from_grid()
+{
+    // 0 = Period
+    // 1 = Demand
+    // 2 = Error
+    // 3 = Forecast
+    // alert(table.data[0][1]);
+    return JSON.parse(JSON.stringify({data: hot.getData()}));
+};
+
+function savedata()
+{
+    // save data on DB via ajax call
+    calculate_forecast();
+    console.log(hot.getData());
+    $.ajax({
+            type: "POST",
+            url: "{{  url_for('save_demand_profile')}}",
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify({data: hot.getData()}),
+            success: function(resp)
+                {
+                alert('Data saved')
+                },
+            });
+};
+
+
+function calculate_forecast()
+{
+    // calculate the forecast to display
+    table = get_data_from_grid();
+    v = [[]]
+    for (i=1; i< table.data[1].length; i++)
+        {
+        demand = table.data[1][i]
+        if (demand === ''|| demand === 0 || demand == undefined)
+            {
+            break;
+            }
+        error = table.data[2][i]
+        v[0].push(demand * (1. + error/100.));
+        console.log(v);
+        }
+
+    console.log('END ', v);
+    hot.populateFromArray(3, 1, v);
+};
 
 </script>
 {% endblock %}

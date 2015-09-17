@@ -418,6 +418,22 @@ def admin_home_view():
     return render_template("admin/admin_home.html", user=current_user, status="Welcome admin")
 
 
+@app.route('/admin/demandprofile/save',  methods=['GET', 'POST'])
+def save_demand_profile():
+    #0 = period
+    #1 = demand
+    #2 = error
+    #3 = forecast
+    # forecast is recalculated because it doesn't come from the call
+
+    app.logger.info(request.json['data'][1])
+    app.logger.info(request.json['data'][2])
+    app.logger.info(request.json['data'][3])
+
+    return jsonify(status=1)
+
+
+
 # @app.route('/admin/waiting/<scenario_code>')
 # @login_required
 # @admin_required
