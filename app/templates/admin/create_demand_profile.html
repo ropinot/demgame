@@ -7,6 +7,10 @@
 
 
 {% block body %}
+<br/>
+Demand profile name
+<input type="text" id="demand_profile_name">
+<br/><br/>
 <div id="demand_profile_grid"></div>
 <br/><br/>
 <center><button onclick='calculate_forecast()'> Show forecast </button>
@@ -96,16 +100,23 @@ function get_data_from_grid()
 function savedata()
 {
     // save data on DB via ajax call
+    dp_name = $('#demand_profile_name').val()
+    if (dp_name === '' || dp_name === undefined)
+        {
+            alert('Define a name for the demand profile');
+            return
+        }
     calculate_forecast();
     console.log(hot.getData());
     $.ajax({
             type: "POST",
             url: "{{  url_for('save_demand_profile')}}",
             contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify({data: hot.getData()}),
+            data: JSON.stringify({data: hot.getData(), demand_profile_name: dp_name}),
             success: function(resp)
                 {
-                alert('Data saved')
+                alert('Data saved. Click ok to continue');
+                window.location.replace('/admin/home');
                 },
             });
 };

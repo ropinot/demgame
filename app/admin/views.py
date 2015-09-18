@@ -16,14 +16,11 @@ def admin_login_view():
     form = AdminLoginForm()
     print 'OK'
     if form.validate_on_submit():
-        print 'VALIDATION'
         # Login and validate the user.
         admin = form.get_admin()
         login_user(admin)
 
-        print 'Logged in successfully.'
-
-        return redirect(url_for('admin_home_view'))
+        return redirect(url_for('admin_home_view', user=current_user))
     return render_template('admin/admin_login_form.html', form=form)
 
 
@@ -136,7 +133,7 @@ def create_new_scenario_view():
 @login_required
 @admin_required
 def create_demand_profile():
-    return render_template('admin/create_demand_profile.html')
+    return render_template('admin/create_demand_profile.html', user=current_user)
 
 
 @app.route('/admin/activate/<scenario_code>')
@@ -426,6 +423,8 @@ def save_demand_profile():
     #3 = forecast
     # forecast is recalculated because it doesn't come from the call
     dp = DemandProfile()
+    dp.name = str(request.json['demand_profile_name'])
+
     db.session.add(dp)
     db.session.commit()
     # app.logger.info(request.json['data'][1])
