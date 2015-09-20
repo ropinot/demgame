@@ -122,7 +122,8 @@ class DemandProfile(db.Model):
     __tablename__ = 'demand_profiles'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(250), unique=True)
+    periods = db.Column(db.Integer)
 
     scenarios = db.relationship('Scenario', backref='demand_profile', lazy='dynamic')
     data = db.relationship('DemandData', backref='demand_profile', lazy='dynamic')

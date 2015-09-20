@@ -115,8 +115,16 @@ function savedata()
             data: JSON.stringify({data: hot.getData(), demand_profile_name: dp_name}),
             success: function(resp)
                 {
-                alert('Data saved. Click ok to continue');
-                window.location.replace('/admin/home');
+                    if (resp.status == 1)
+                    {
+                        alert('Data saved. Click ok to continue');
+                        window.location.replace('/admin/home');
+                    }
+                    else if (resp.status == -1)
+                    {
+                        alert('Demand profile name must be unique');
+                    }
+
                 },
             });
 };

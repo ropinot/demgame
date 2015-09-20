@@ -8,6 +8,7 @@ from app.game_constants import *
 from app.game_functions import admin_required
 from admin_functions import get_new_scenario_code
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 
 @app.route('/admin')
@@ -38,6 +39,8 @@ def admin_logout_view():
 @admin_required
 def create_new_scenario_view():
     form = CreateScenarioForm()
+    form.demand_profile_id.choices = [(dp.id, dp.name) for dp in DemandProfile.query.all()]
+
     if form.validate_on_submit():
 
         # save the scenario
@@ -134,6 +137,15 @@ def create_new_scenario_view():
 @admin_required
 def create_demand_profile():
     return render_template('admin/create_demand_profile.html', user=current_user)
+
+
+@app.route('/admin/listdemandprofile')
+@login_required
+@admin_required
+def list_demand_profiles():
+    demand_profiles = DemandProfile.query.all()
+    print demand_profiles
+    return render_template('admin/list_demand_profiles.html', user=current_user)
 
 
 @app.route('/admin/activate/<scenario_code>')
@@ -425,8 +437,12 @@ def save_demand_profile():
     dp = DemandProfile()
     dp.name = str(request.json['demand_profile_name'])
 
-    db.session.add(dp)
-    db.session.commit()
+    try:
+        db.session.add(dp)
+        db.session.commit()
+    except IntegrityError:
+        return jsonify(status=-1)
+
     # app.logger.info(request.json['data'][1])
     # app.logger.info(request.json['data'][2])
     # app.logger.info(request.json['data'][3])
