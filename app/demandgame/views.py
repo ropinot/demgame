@@ -1,6 +1,6 @@
 from app import app, db
 from app.models import Player, Scenario, GameBoard
-from flask import render_template, redirect, session
+from flask import render_template, redirect, session, url_for, Response
 from app.table import TableDict
 from flask.ext.login import login_required, login_user, logout_user,  current_user
 from app.demandgame.forms import OrderForm
@@ -31,8 +31,8 @@ def demand_game_dashboard():
     data.set_cell('order', 2, 1000)
 
     if gameboard.period > scenario.duration:
-        # finish the game
-        pass
+        return redirect(url_for('results_view'))
+
 
     gameboard.table = cPickle.dumps(data)
     db.session.commit()
@@ -43,3 +43,7 @@ def demand_game_dashboard():
                             period=data.data['current'],
                             form=form)
 
+@app.route('/demandgame/results', methods=['GET', 'POST'])
+@login_required
+def results_view():
+    return Response('<br><h3>Game ended</h3>')
