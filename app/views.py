@@ -31,11 +31,11 @@ def login_view():
 
         # check if the player has ACTIVE or RUNNING scenarios
         # if so, redirect to the game
-        for scenario in player.played_scenario:
-            if scenario.status in [ACTIVE, RUNNING]:
-                session['scenario_code'] = scenario.code
-                session['scenario_id'] = scenario.id
-                return redirect(url_for('demand_game_dashboard'))
+        # for scenario in player.played_scenario:
+        #     if scenario.status in [ACTIVE, RUNNING]:
+        #         session['scenario_code'] = scenario.code
+        #         session['scenario_id'] = scenario.id
+        #         return redirect(url_for('demand_game_dashboard'))
 
         return redirect(url_for('player_home_view'))
     return render_template('login_form.html', form=form)
@@ -83,19 +83,26 @@ def enter_game_code_view():
         # get the id of the scenario corresponding to the code
         scenario = db.session.query(Scenario).filter(and_(Scenario.code == form.code.data,
                                                           Scenario.status == ACTIVE)).first()
+
         if scenario:  # the code is valid
+            # check if the scenario is ACTIVE or RUNNING
+            # if so, redirect to the game
+            if scenario.status in [ACTIVE, RUNNING]:
+                session['scenario_code'] = scenario.code
+                session['scenario_id'] = scenario.id
+                return redirect(url_for('demand_game_dashboard'))
+
             player = db.session.query(Player).get(current_user.get_id())
             player.played_scenario.append(scenario)
             db.session.commit()
             session['scenario_id'] = scenario.id
             session['scenario_code'] = scenario.code
-
             scenario = Scenario.query.get(scenario.id)
 
             #init the gameboard
             gameboard = GameBoard()
             gameboard.period = 1
-            gameboard.table = cPickle.dumps(TableDict(scenario.duration))
+            gameboard.table = cPickle.dumps(TableDict(scenario.duration)) # a dump of the table containing th game data
 
             player.gameboards.append(gameboard)
             scenario.gameboards.append(gameboard)

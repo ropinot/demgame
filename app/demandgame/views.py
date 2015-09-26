@@ -27,8 +27,8 @@ def demand_game_dashboard():
 
     data = cPickle.loads(str(gameboard.table))
     current_period = gameboard.period
-    gameboard.period += 1
     data.set_current(gameboard.period)
+    gameboard.period += 1
     # data.set_cell('order', 2, 1000)
 
     if gameboard.period > scenario.duration:
