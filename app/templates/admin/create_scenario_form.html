@@ -61,6 +61,18 @@
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
+                    <td>Forecast horizon</td>
+                    <td>
+                        {{ form.forecast_horizon(size=5, style='text-align:center') }} periods
+                        {% for error in form.forecast_horizon.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>&nbsp;</td>
                     <td>
                         Product cost
                     </td>

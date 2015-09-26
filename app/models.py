@@ -93,7 +93,8 @@ class Scenario(db.Model):
     code = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(50))
     duration = db.Column(db.Integer)    #number of periods in the game
-    leadtime = db.Column(db.Integer)
+    leadtime = db.Column(db.Integer)    # from order to receipt (1 = today for tomorrow)
+    forecast_horizon = db.Column(db.Integer) # number of forecasts visible
     product_cost = db.Column(db.Float)
     stock_cost = db.Column(db.Float)
     lostsale_cost = db.Column(db.Float())

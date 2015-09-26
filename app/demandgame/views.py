@@ -24,11 +24,12 @@ def demand_game_dashboard():
     if not gameboard:
         raise Exception('No gameboard found')
 
+
     data = cPickle.loads(str(gameboard.table))
     current_period = gameboard.period
     gameboard.period += 1
     data.set_current(gameboard.period)
-    data.set_cell('order', 2, 1000)
+    # data.set_cell('order', 2, 1000)
 
     if gameboard.period > scenario.duration:
         return redirect(url_for('results_view'))
