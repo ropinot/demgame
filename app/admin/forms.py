@@ -28,6 +28,7 @@ class AdminLoginForm(wtf.Form):
 
 
 class CreateScenarioForm(wtf.Form):
+    #TODO: remove duration field, get it from the demand profile
     name = StringField('name', validators=[DataRequired()])
     duration = StringField('duration', default=25, validators=[DataRequired()])
     leadtime = StringField('leadtime', default=1, validators=[DataRequired()])

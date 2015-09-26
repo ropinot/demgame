@@ -35,6 +35,8 @@ class TableDict(object):
 
         if 0 < period <= self.data['num_periods']:
             return self.data[row][period]
+        else:
+            return 0
 
 
     def print_table(self):

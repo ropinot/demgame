@@ -433,6 +433,8 @@ def save_demand_profile():
     #2 = error
     #3 = forecast
     # forecast is recalculated because it doesn't come from the call
+
+    #TODO: save the number of periods
     dp = DemandProfile()
     dp.name = str(request.json['demand_profile_name'])
 
