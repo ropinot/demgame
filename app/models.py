@@ -124,6 +124,8 @@ class DemandProfile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), unique=True)
+    description = db.Column(db.Text)
+    initial_stock = db.Column(db.Integer)
     periods = db.Column(db.Integer)
 
     scenarios = db.relationship('Scenario', backref='demand_profile', lazy='dynamic')

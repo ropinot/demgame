@@ -437,6 +437,8 @@ def save_demand_profile():
     #TODO: save the number of periods
     dp = DemandProfile()
     dp.name = str(request.json['demand_profile_name'])
+    dp.description = str(request.json['demand_profile_description'])
+    dp.initial_stock = int(request.json['initial_stock'])
 
     try:
         db.session.add(dp)

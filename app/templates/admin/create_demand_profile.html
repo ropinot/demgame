@@ -7,12 +7,26 @@
 
 
 {% block body %}
+<table cellspacing="10" cellpadding="10">
+    <tr>
+        <td>Demand profile name</td>
+        <td><input type="text" id="demand_profile_name" size=49></td>
+    <tr>
+    <tr>
+        <td>Description</td>
+        <td><textarea id="demand_profile_description" rows=3 cols=50></textarea></td>
+    </tr>
+    <tr>
+        <td>Initial stock</td>
+        <td><input type="text" id="initial_stock" size=5 value=0> units</td>
+    </tr>
+</table>
 <br/>
-Demand profile name
-<input type="text" id="demand_profile_name">
-<br/><br/>
 <div id="demand_profile_grid"></div>
-<br/><br/>
+<br/>
+
+
+
 <center><button onclick='calculate_forecast()'> Show forecast </button>
 <button onclick="savedata()">Save</button></center>
 
@@ -101,18 +115,31 @@ function savedata()
 {
     // save data on DB via ajax call
     dp_name = $('#demand_profile_name').val()
+    dp_description = $('#demand_profile_description').val()
+    dp_initial_stock = $('#initial_stock').val()
+
     if (dp_name === '' || dp_name === undefined)
         {
             alert('Define a name for the demand profile');
             return
         }
+
+    if (dp_initial_stock < 0)
+        {
+            alert('The initial stock must not be negative');
+            return
+        }
+
     calculate_forecast();
     console.log(hot.getData());
     $.ajax({
             type: "POST",
             url: "{{  url_for('save_demand_profile')}}",
             contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify({data: hot.getData(), demand_profile_name: dp_name}),
+            data: JSON.stringify({data: hot.getData(),
+                                  demand_profile_name: dp_name,
+                                  demand_profile_description: dp_description,
+                                  initial_stock: dp_initial_stock}),
             success: function(resp)
                 {
                     if (resp.status == 1)

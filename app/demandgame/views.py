@@ -67,6 +67,14 @@ def demand_game_dashboard():
                    current_period,
                    data.get_cell('order', current_period - scenario.leadtime)) # get the order of leadtime periods ago
 
+    # display the stock
+    if current_period == 1:
+        data.set_cell('stock', current_period, demand_profile.initial_stock)
+    else:
+        previous_stock = data.get_cell('stock', current_period - 1)
+        current_stock = previous_stock + data.get_cell('order', current_period - scenario.leadtime)
+        data.set_cell('stock', current_period, current_stock)
+
     # display the forecast over the forecast horizon
     for t in xrange(scenario.forecast_horizon):
         #TODO: reduce to one query without for loop

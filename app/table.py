@@ -10,8 +10,10 @@ class TableDict(object):
         self.data['stock'] =  {t: 0 for t in xrange(1, num_periods+1)}
         self.data['forecast'] =  {t: 0 for t in xrange(1, num_periods+2)}
         self.data['order'] =  {t: 0 for t in xrange(1, num_periods+1)}
-        self.data['received'] =  {t: 0 for t in xrange(1, num_periods+1)}
-        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received']
+        self.data['received'] = {t: 0 for t in xrange(1, num_periods+1)}
+        self.data['sales'] = {t: 0 for t in xrange(1, num_periods+1)}
+        self.data['lost_sales'] = {t: 0 for t in xrange(1, num_periods+1)}
+        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received', 'sales', 'lost_sales']
         self.data['current'] = 1
 
     def __getitem__(self, key):
@@ -22,7 +24,7 @@ class TableDict(object):
 
     def set_cell(self, row, period, value):
         if row not in self.data['allowed']:
-            raise Exception('Row identifier not recognized')
+            raise Exception('Row {} not recognized'.format(row))
 
         if 0 < period <= self.data['num_periods']:
             self.data[row][period] = value
@@ -31,7 +33,7 @@ class TableDict(object):
 
     def get_cell(self, row, period):
         if row not in self.data['allowed']:
-            raise Exception('Row identifier not recognized')
+            raise Exception('Row {} not recognized'.format(row))
 
         if 0 < period <= self.data['num_periods']:
             return self.data[row][period]
@@ -41,10 +43,12 @@ class TableDict(object):
 
     def print_table(self):
         print self.data['forecast']
-        print self.data['received']
         print self.data['stock']
+        print self.data['received']
         print self.data['order']
         print self.data['demand']
+        print self.data['sales']
+        print self.data['lost_sales']
 
 
     def get_HTML(self):
@@ -58,6 +62,8 @@ class TableDict(object):
         html += self.convert_row('forecast')
         html += self.convert_row('demand')
         html += self.convert_row('order')
+        html += self.convert_row('sales')
+        html += self.convert_row('lost_sales')
 
         html += '</table>'
         return html
@@ -65,7 +71,7 @@ class TableDict(object):
 
     def convert_row(self, row):
         if row not in self.data['allowed']:
-            raise Exception('Row identifier not recognized')
+            raise Exception('Row {} not recognized'.format(row))
         _html = ''
         _html +='<tr><td>{}</td>'.format(row.upper())
         for t in xrange(1, self.data['num_periods']+1):
