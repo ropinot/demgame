@@ -84,15 +84,17 @@ def enter_game_code_view():
         scenario = db.session.query(Scenario).filter(and_(Scenario.code == form.code.data,
                                                           Scenario.status == ACTIVE)).first()
 
+        player = db.session.query(Player).get(current_user.get_id())
+
         if scenario:  # the code is valid
             # check if the scenario is ACTIVE or RUNNING
             # if so, redirect to the game
-            if scenario.status in [ACTIVE, RUNNING]:
+            if scenario in player.played_scenario and scenario.status in [ACTIVE, RUNNING]:
                 session['scenario_code'] = scenario.code
                 session['scenario_id'] = scenario.id
                 return redirect(url_for('demand_game_dashboard'))
 
-            player = db.session.query(Player).get(current_user.get_id())
+
             player.played_scenario.append(scenario)
             db.session.commit()
             session['scenario_id'] = scenario.id

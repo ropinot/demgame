@@ -7,6 +7,8 @@ from wtforms.validators import DataRequired, ValidationError
 from sqlalchemy import and_
 
 class OrderForm(wtf.Form):
-    qty = StringField('Order quantity', default=0, validators=[DataRequired()])
+    qty = StringField('qty', default=0, validators=[DataRequired()])
 
+    def validate_order(self):
+        pass
 

@@ -15,7 +15,6 @@ from sqlalchemy.exc import IntegrityError
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login_view():
     form = AdminLoginForm()
-    print 'OK'
     if form.validate_on_submit():
         # Login and validate the user.
         admin = form.get_admin()

@@ -11,7 +11,7 @@ import cPickle
 @login_required
 def demand_game_dashboard():
     # get the currently played gameboard for the player
-    form = OrderForm()
+
     player = Player.query.get(current_user.get_id())
     if not player:
         raise Exception('No player found')
@@ -21,6 +21,7 @@ def demand_game_dashboard():
         raise Exception('No scenario found')
 
     gameboard = player.gameboards.filter(GameBoard.scenario_id==session['scenario_id']).first()
+
     if not gameboard:
         raise Exception('No gameboard found')
 
@@ -29,15 +30,30 @@ def demand_game_dashboard():
     current_period = gameboard.period
     data.set_current(gameboard.period)
     gameboard.period += 1
-    # data.set_cell('order', 2, 1000)
+
 
     if gameboard.period > scenario.duration:
         return redirect(url_for('results_view'))
 
+    # fill up the table with data to show
+    try:
+        form = OrderForm()
+        if form.validate():
+            app.logger.debug('Form is valid')
+            if form.qty.data > 0:
+                app.logger.info('Record an order for {} units in period {}'.format(form.qty.data, current_period))
+                data.set_cell('order', current_period-1, int(form.qty.data))
+            else:
+                app.logger.info('No order to record in period {}'.format(current_period))
+        else:
+            app.logger.debug('Form is NOT valid')
+    except UnboundLocalError:
+        app.logger.debug('No form')
 
+    # save the updated table on DB
     gameboard.table = cPickle.dumps(data)
     db.session.commit()
-
+    form.qty.data = 0
     # print gameboard.table.print_table()
     return render_template('demandgame/dashboard.html',
                             table=data.get_HTML(),
