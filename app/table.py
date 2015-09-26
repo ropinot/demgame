@@ -40,11 +40,11 @@ class TableDict(object):
 
 
     def print_table(self):
-        print self.data['demand']
-        print self.data['stock']
         print self.data['forecast']
-        print self.data['order']
         print self.data['received']
+        print self.data['stock']
+        print self.data['order']
+        print self.data['demand']
 
 
     def get_HTML(self):

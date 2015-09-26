@@ -53,11 +53,12 @@ def demand_game_dashboard():
     except UnboundLocalError:
         app.logger.debug('No form')
 
-    # get the demand scenario
+    # get the demand profile
     demand_profile = scenario.demand_profile
 
     # get the current period data
     demand_profile_data = demand_profile.data.filter(DemandData.period == current_period).first()
+
     # display the demand
     data.set_cell('demand', current_period-1, demand_profile_data.demand)
 
@@ -70,7 +71,14 @@ def demand_game_dashboard():
     for t in xrange(scenario.forecast_horizon):
         #TODO: reduce to one query without for loop
         demand_profile_data = demand_profile.data.filter(DemandData.period == current_period+t).first()
-        data.set_cell('forecast', current_period+t, demand_profile_data.forecast)
+        try:
+            data.set_cell('forecast', current_period+t, demand_profile_data.forecast)
+        except AttributeError:
+            pass
+
+    # calculate the current stock
+
+
 
     # save the updated table on DB
     gameboard.table = cPickle.dumps(data)
@@ -80,7 +88,9 @@ def demand_game_dashboard():
     return render_template('demandgame/dashboard.html',
                             table=data.get_HTML(),
                             period=data.data['current'],
-                            form=form)
+                            form=form,
+                            leadtime=scenario.leadtime,
+                            forecast_horizon=scenario.forecast_horizon)
 
 @app.route('/demandgame/results', methods=['GET', 'POST'])
 @login_required

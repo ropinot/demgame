@@ -1,4 +1,4 @@
-<h2> Hello from the demand game template folder</h2>
+<h2> Demand & production planning dashboard</h2>
 <style>
 .current{
     background-color: lightgreen;
@@ -24,7 +24,10 @@ td{
 
 
 <br/>
-{{ period }}
+<center>Current period: {{ period }}<br/>
+Lead time: {{ leadtime }}<br/>
+Forecasting horizon: {{ forecast_horizon }}
+</center>
 <br/>
 <!-- <a href={{ url_for('demand_game_dashboard') }}> Next </a> -->
 
