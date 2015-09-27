@@ -33,11 +33,10 @@ def demand_game_dashboard():
     gameboard.period += 1
 
 
-    if gameboard.period > scenario.duration:
+    if current_period > scenario.duration:
         return redirect(url_for('results_view'))
 
     # fill up the table with data to show
-
     # record the order
     try:
         form = OrderForm()
@@ -72,8 +71,22 @@ def demand_game_dashboard():
         data.set_cell('stock', current_period, demand_profile.initial_stock)
     else:
         previous_stock = data.get_cell('stock', current_period - 1)
-        current_stock = previous_stock + data.get_cell('order', current_period - scenario.leadtime)
+        current_stock = max(0, previous_stock +\
+                               data.get_cell('order', current_period - scenario.leadtime) -\
+                               data.get_cell('demand', current_period-1))
+
         data.set_cell('stock', current_period, current_stock)
+
+    # display sales and lost-sales
+    #TODO: refactor the call to the data values
+    sales = min((data.get_cell('stock', current_period - 1) + data.get_cell('received', current_period - 1)),
+                 data.get_cell('demand', current_period - 1))
+
+    data.set_cell('sales', current_period - 1, sales)
+
+    s = '<font color="{color}">{value}</font>'
+    lost_sales = max(0, data.get_cell('demand', current_period - 1) - (data.get_cell('stock', current_period - 1) + data.get_cell('received', current_period - 1)))
+    data.set_cell('lost_sales', current_period - 1, s.format(color="red", value=lost_sales))
 
     # display the forecast over the forecast horizon
     for t in xrange(scenario.forecast_horizon):
@@ -83,9 +96,6 @@ def demand_game_dashboard():
             data.set_cell('forecast', current_period+t, demand_profile_data.forecast)
         except AttributeError:
             pass
-
-    # calculate the current stock
-
 
 
     # save the updated table on DB

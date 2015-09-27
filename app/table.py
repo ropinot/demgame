@@ -57,8 +57,8 @@ class TableDict(object):
             html += '<th width={}px>{}</th>'.format(45, t)
         html +='</tr>'
 
-        html += self.convert_row('stock')
         html += self.convert_row('received')
+        html += self.convert_row('stock')
         html += self.convert_row('forecast')
         html += self.convert_row('demand')
         html += self.convert_row('order')
