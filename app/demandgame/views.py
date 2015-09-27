@@ -1,9 +1,10 @@
 from app import app, db
+# from app.views import error_view
 from app.models import Player, Scenario, GameBoard, DemandData, DemandProfile
-from flask import render_template, redirect, session, url_for, Response
 from app.table import TableDict
-from flask.ext.login import login_required, login_user, logout_user,  current_user
 from app.demandgame.forms import OrderForm
+from flask import render_template, redirect, session, url_for, Response
+from flask.ext.login import login_required, login_user, logout_user,  current_user
 from sqlalchemy import and_
 import sys
 import cPickle
@@ -13,27 +14,32 @@ import cPickle
 def demand_game_dashboard():
     # get the currently played gameboard for the player
 
-    player = Player.query.get(current_user.get_id())
-    if not player:
-        raise Exception('No player found')
+    # player = Player.query.get(current_user.get_id())
+    # if not player:
+    #     raise Exception('No player found')
 
-    scenario = Scenario.query.get(session['scenario_id'])
-    if not scenario:
-        raise Exception('No scenario found')
+    # scenario = Scenario.query.get(session['scenario_id'])
+    # if not scenario:
+    #     raise Exception('No scenario found')
 
-    gameboard = player.gameboards.filter(GameBoard.scenario_id==session['scenario_id']).first()
+    # gameboard = player.gameboards.filter(GameBoard.scenario_id==session['scenario_id']).first()
 
-    if not gameboard:
-        raise Exception('No gameboard found')
+    # if not gameboard:
+    #     raise Exception('No gameboard found')
+    try:
+        player, scenario, gameboard = get_game_data()
+    except Exception as e:
+        app.logger.error(e)
+        return redirect(url_for('error_view'))
 
-
+    #TODO: define a method in the Gameboard model to return the table
     data = cPickle.loads(str(gameboard.table))
     current_period = gameboard.period
     data.set_current(gameboard.period)
     gameboard.period += 1
 
 
-    if current_period > scenario.duration:
+    if current_period > scenario.duration + 1:
         return redirect(url_for('results_view'))
 
     # fill up the table with data to show
@@ -84,9 +90,9 @@ def demand_game_dashboard():
 
     data.set_cell('sales', current_period - 1, sales)
 
-    s = '<font color="{color}">{value}</font>'
+    # s = '<font color="{color}">{value}</font>'
     lost_sales = max(0, data.get_cell('demand', current_period - 1) - (data.get_cell('stock', current_period - 1) + data.get_cell('received', current_period - 1)))
-    data.set_cell('lost_sales', current_period - 1, s.format(color="red", value=lost_sales))
+    data.set_cell('lost_sales', current_period - 1, lost_sales)
 
     # display the forecast over the forecast horizon
     for t in xrange(scenario.forecast_horizon):
@@ -97,12 +103,16 @@ def demand_game_dashboard():
         except AttributeError:
             pass
 
+    # display the error
+    data.set_cell('error', current_period - 1,
+                  data.get_cell('forecast', current_period - 1) - data.get_cell('demand', current_period - 1))
 
     # save the updated table on DB
     gameboard.table = cPickle.dumps(data)
     db.session.commit()
     form.qty.data = 0
 
+    #TODO: add MAPE and rolling MAPE data
     return render_template('demandgame/dashboard.html',
                             table=data.get_HTML(),
                             period=data.data['current'],
@@ -110,7 +120,46 @@ def demand_game_dashboard():
                             leadtime=scenario.leadtime,
                             forecast_horizon=scenario.forecast_horizon)
 
+
 @app.route('/demandgame/results', methods=['GET', 'POST'])
 @login_required
 def results_view():
-    return Response('<br><h3>Game ended</h3>')
+    # get the info about the player and the scenario
+
+    try:
+        player, scenario, gameboard = get_game_data()
+    except Exception as e:
+        app.logger.error(e)
+        return redirect(url_for('error_view'))
+
+    data = cPickle.loads(str(gameboard.table))
+
+    total_demand = sum(map(int, data.data['demand'].values()))
+    total_sales = sum(data.data['sales'].values())
+    total_lost_sales = sum(data.data['lost_sales'].values())
+    total_purchase = sum(data.data['order'].values())
+
+    return render_template('/demandgame/results.html',
+                            total_demand=total_demand,
+                            total_sales=total_sales,
+                            total_lost_sales=total_lost_sales,
+                            total_purchase=total_purchase)
+
+
+def get_game_data():
+    """ Get the data about the player, the scenario and the gameboard """
+
+    player = Player.query.get(current_user.get_id())
+    if not player:
+        raise Exception('No player found')
+
+    scenario = Scenario.query.get(session['scenario_id'])
+    if not scenario:
+        raise Exception('No scenario found')
+
+    gameboard = player.gameboards.filter(GameBoard.scenario_id==session['scenario_id']).first()
+
+    if not gameboard:
+        raise Exception('No gameboard found')
+
+    return (player, scenario, gameboard)

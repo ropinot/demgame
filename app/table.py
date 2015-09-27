@@ -13,7 +13,8 @@ class TableDict(object):
         self.data['received'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['sales'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['lost_sales'] = {t: 0 for t in xrange(1, num_periods+1)}
-        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received', 'sales', 'lost_sales']
+        self.data['error'] = {t: 0. for t in xrange(1, num_periods+1)}
+        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received', 'sales', 'lost_sales', 'error']
         self.data['current'] = 1
 
     def __getitem__(self, key):
@@ -64,6 +65,7 @@ class TableDict(object):
         html += self.convert_row('order')
         html += self.convert_row('sales')
         html += self.convert_row('lost_sales')
+        html += self.convert_row('error')
 
         html += '</table>'
         return html
@@ -71,7 +73,7 @@ class TableDict(object):
 
     def convert_row(self, row):
         if row not in self.data['allowed']:
-            raise Exception('Row {} not recognized'.format(row))
+            raise Exception('Row {} not recognized ({})'.format(row, str(self.data['allowed'])))
         _html = ''
         _html +='<tr><td>{}</td>'.format(row.upper())
         for t in xrange(1, self.data['num_periods']+1):

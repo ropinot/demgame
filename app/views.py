@@ -144,3 +144,8 @@ def site_map():
 
     print links
     return Response('OK')
+
+
+@app.route("/error")
+def error_view():
+    return render_template('error.html')
