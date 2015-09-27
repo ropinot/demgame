@@ -26,6 +26,17 @@ td{
 <br/>
 <center>
 <table border=0 class="table table-striped table-condensed" width="40%">
+    <tr>
+        <td>MAPE</td>
+        <td>{{ mape }}</td>
+    </tr>
+    <tr>
+        <td>Rolling MAPE (3 periods)</td>
+        <td>{{ rolling_mape }}</td>
+    </tr>
+</table>
+<br/>
+<table border=0 class="table table-striped table-condensed" width="40%">
     <tr><td>Current period</td><td align='center'>{{ period }}</td></tr>
     <tr><td>Lead time</td><td align='center'>{{ leadtime }}</td></tr>
     <tr><td>Forecasting horizon</td><td align='center'>{{ forecast_horizon }}</td></tr>

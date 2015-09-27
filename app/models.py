@@ -95,13 +95,15 @@ class Scenario(db.Model):
     duration = db.Column(db.Integer)    #number of periods in the game
     leadtime = db.Column(db.Integer)    # from order to receipt (1 = today for tomorrow)
     forecast_horizon = db.Column(db.Integer) # number of forecasts visible
+    frozen_horizon = db.Column(db.Integer)   # number of frozen periods
     product_cost = db.Column(db.Float)
     stock_cost = db.Column(db.Float)
     lostsale_cost = db.Column(db.Float())
-    owner_id = db.Column(db.Integer, db.ForeignKey('players.id'))
     creation_date = db.Column(db.DateTime)
     activation_date = db.Column(db.DateTime)
     run_date = db.Column(db.DateTime)
+
+    owner_id = db.Column(db.Integer, db.ForeignKey('players.id'))
     demand_profile_id = db.Column(db.Integer, db.ForeignKey('demand_profiles.id'))
 
     gameboards = db.relationship('GameBoard', backref='scenario', lazy='dynamic')

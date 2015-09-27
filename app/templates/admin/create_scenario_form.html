@@ -33,8 +33,21 @@
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </td>
-                    <!--<td>Total duration in hh:mm:ss = <span id="total_duration">00:00:00</span></td>-->
                 </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Frozen horizon
+                    </td>
+                    <td colspan="2">
+                        {{ form.frozen_horizon(size=5, style='text-align:center')}} periods
+                        {% for error in form.frozen_horizon.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+
                 <tr>
                         <td>&nbsp;</td>
                         <td>

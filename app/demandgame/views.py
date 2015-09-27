@@ -95,6 +95,7 @@ def demand_game_dashboard():
     data.set_cell('lost_sales', current_period - 1, lost_sales)
 
     # display the forecast over the forecast horizon
+    #TODO: jitter the data beyond the frozen horizon
     for t in xrange(scenario.forecast_horizon):
         #TODO: reduce to one query without for loop
         demand_profile_data = demand_profile.data.filter(DemandData.period == current_period+t).first()
@@ -106,6 +107,8 @@ def demand_game_dashboard():
     # display the error
     data.set_cell('error', current_period - 1,
                   data.get_cell('forecast', current_period - 1) - data.get_cell('demand', current_period - 1))
+
+    #TODO: calculate the MAPE and the rolling MAPE
 
     # save the updated table on DB
     gameboard.table = cPickle.dumps(data)

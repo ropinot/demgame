@@ -43,6 +43,7 @@ def create_new_scenario_view():
     if form.validate_on_submit():
 
         # save the scenario
+        #TODO: get the scenario duration from the demand profile
         scenario = Scenario()
         form.populate_obj(scenario)
         scenario.owner_id = current_user.get_id()
