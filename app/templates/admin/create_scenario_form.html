@@ -22,13 +22,13 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td>&nbsp;</td>
-                    <td>
-                        Number of periods in game
-                    </td>
-                    <td colspan="2">
-                        {{ form.duration(size=5, style='text-align:center')}} periods
-                        {% for error in form.duration.errors %}
+                        <td>&nbsp;</td>
+                        <td>
+                        Demand profile
+                        </td>
+                        <td colspan="2">
+                        {{ form.demand_profile_id }}
+                        {% for error in form.demand_profile_id.errors %}
                         <br/>
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
@@ -42,20 +42,6 @@
                     <td colspan="2">
                         {{ form.frozen_horizon(size=5, style='text-align:center')}} periods
                         {% for error in form.frozen_horizon.errors %}
-                        <br/>
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </td>
-                </tr>
-
-                <tr>
-                        <td>&nbsp;</td>
-                        <td>
-                        Demand profile
-                        </td>
-                        <td colspan="2">
-                        {{ form.demand_profile_id }}
-                        {% for error in form.demand_profile_id.errors %}
                         <br/>
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}

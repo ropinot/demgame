@@ -43,7 +43,6 @@ def create_new_scenario_view():
     if form.validate_on_submit():
 
         # save the scenario
-        #TODO: get the scenario duration from the demand profile
         scenario = Scenario()
         form.populate_obj(scenario)
         scenario.owner_id = current_user.get_id()
@@ -51,6 +50,10 @@ def create_new_scenario_view():
         scenario.status = IDLE
         scenario.creation_date = datetime.now()
 
+        # get the selected demand profile
+        dp = DemandProfile.query.filter(DemandProfile.id==form.demand_profile_id.data).first()
+        # copy the demand profile's number of periods in the scenario duration
+        scenario.duration = dp.periods
         db.session.add(scenario)
         db.session.commit()
 
@@ -435,7 +438,6 @@ def save_demand_profile():
     #3 = forecast
     # forecast is recalculated because it doesn't come from the call
 
-    #TODO: save the number of periods
     dp = DemandProfile()
     dp.name = str(request.json['demand_profile_name'])
     dp.description = str(request.json['demand_profile_description'])
@@ -453,6 +455,7 @@ def save_demand_profile():
     demand = request.json['data'][1]
     error = request.json['data'][2]
 
+    num_periods = 0
     for period, value in enumerate(demand):
         if period == 0:
             continue
@@ -465,7 +468,9 @@ def save_demand_profile():
         data.forecast = int(value) * (1+ int(error[period])/100.)
         dp.data.append(data)
         db.session.add(data)
+        num_periods += 1
 
+    dp.periods = num_periods
     db.session.commit()
     return jsonify(status=1)
 
