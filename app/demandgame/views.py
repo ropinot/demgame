@@ -7,26 +7,15 @@ from app.demandgame.forms import OrderForm
 from flask import render_template, redirect, session, url_for, Response
 from flask.ext.login import login_required, login_user, logout_user,  current_user
 from sqlalchemy import and_
+from random import random
+
 import sys
 import cPickle
 
 @app.route('/demandgame/dashboard', methods=['GET', 'POST'])
 @login_required
 def demand_game_dashboard():
-    # get the currently played gameboard for the player
-
-    # player = Player.query.get(current_user.get_id())
-    # if not player:
-    #     raise Exception('No player found')
-
-    # scenario = Scenario.query.get(session['scenario_id'])
-    # if not scenario:
-    #     raise Exception('No scenario found')
-
-    # gameboard = player.gameboards.filter(GameBoard.scenario_id==session['scenario_id']).first()
-
-    # if not gameboard:
-    #     raise Exception('No gameboard found')
+    # get the player, scenario and gameboard
     try:
         player, scenario, gameboard = get_game_data()
     except Exception as e:
@@ -34,6 +23,7 @@ def demand_game_dashboard():
         return redirect(url_for('error_view'))
 
     #TODO: define a method in the Gameboard model to return the table
+    #TEST: create a test before
     data = cPickle.loads(str(gameboard.table))
     current_period = gameboard.period
     data.set_current(gameboard.period)
@@ -97,11 +87,18 @@ def demand_game_dashboard():
 
     # display the forecast over the forecast horizon
     #TODO: jitter the data beyond the frozen horizon
+    # generate the demand_jittering list with 1.0 for the frozen periods and random values beyond it
+
+    # demand_jittering = [1.0, 1.10, 1.20, 1.30, 1.40]  # function(frozen period, forecast_horizon)
+    demand_jittering = jittering(scenario.forecast_horizon, scenario.frozen_horizon)
+    app.logger.debug('jittering: {}'.format(str(demand_jittering)))
+
     for t in xrange(scenario.forecast_horizon):
         #TODO: reduce to one query without for loop
         demand_profile_data = demand_profile.data.filter(DemandData.period == current_period+t).first()
         try:
-            data.set_cell('forecast', current_period+t, demand_profile_data.forecast)
+            data.set_cell('forecast', current_period+t,
+                          int(demand_profile_data.forecast * demand_jittering[t]))
         except AttributeError:
             pass
 
@@ -109,7 +106,6 @@ def demand_game_dashboard():
     data.set_cell('error', current_period - 1,
                   data.get_cell('forecast', current_period - 1) - data.get_cell('demand', current_period - 1))
 
-    #TODO: calculate the MAPE and the rolling MAPE
     mape = 0.0
     rolling_mape = 0.0
     if current_period > 1:
@@ -120,7 +116,6 @@ def demand_game_dashboard():
         app.logger.debug('forecast all: {}'.format(str(forecast_all)))
         mape = float(MAPE(demand_all, forecast_all))
         app.logger.info('MAPE: {} %'.format(mape))
-
 
         # get data for the rolling MAPE (3 periods)
         demand_3_periods = data.get_interval('demand', current_period - 3, current_period-1)
@@ -135,7 +130,6 @@ def demand_game_dashboard():
     db.session.commit()
     form.qty.data = 0
 
-    #TODO: add MAPE and rolling MAPE data
     return render_template('demandgame/dashboard.html',
                             table=data.get_HTML(),
                             period=data.data['current'],
@@ -202,3 +196,14 @@ def MAPE(demand, forecast):
         mape += abs(d - f) / d
 
     return '{:.1f}'.format(mape * 100./ n)
+
+
+def jittering(forecast_horizon, frozen_horizon):
+    jittering = [1. for _ in xrange(frozen_horizon)]
+    #TODO: increase jitter according to forecast horizon
+    for t in xrange(frozen_horizon, forecast_horizon):
+        jittering.append(1.+random())
+
+    return jittering
+
+
