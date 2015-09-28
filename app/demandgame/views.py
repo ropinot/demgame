@@ -1,3 +1,4 @@
+from __future__ import division
 from app import app, db
 # from app.views import error_view
 from app.models import Player, Scenario, GameBoard, DemandData, DemandProfile
@@ -109,6 +110,25 @@ def demand_game_dashboard():
                   data.get_cell('forecast', current_period - 1) - data.get_cell('demand', current_period - 1))
 
     #TODO: calculate the MAPE and the rolling MAPE
+    mape = 0.0
+    rolling_mape = 0.0
+    if current_period > 1:
+        # get data for the MAPE
+        demand_all = data.get_interval('demand', 0, current_period-1)
+        forecast_all = data.get_interval('forecast', 0, current_period-1)
+        app.logger.debug('demand all: {}'.format(str(demand_all)))
+        app.logger.debug('forecast all: {}'.format(str(forecast_all)))
+        mape = float(MAPE(demand_all, forecast_all))
+        app.logger.info('MAPE: {} %'.format(mape))
+
+
+        # get data for the rolling MAPE (3 periods)
+        demand_3_periods = data.get_interval('demand', current_period - 3, current_period-1)
+        forecast_3_periods = data.get_interval('forecast', current_period - 3, current_period-1)
+        app.logger.debug('demand 3: {}'.format(str(demand_3_periods)))
+        app.logger.debug('forecast 3: {}'.format(str(forecast_3_periods)))
+        rolling_mape = float(MAPE(demand_3_periods, forecast_3_periods))
+        app.logger.info('ROLLING MAPE: {} %'.format(mape))
 
     # save the updated table on DB
     gameboard.table = cPickle.dumps(data)
@@ -121,7 +141,9 @@ def demand_game_dashboard():
                             period=data.data['current'],
                             form=form,
                             leadtime=scenario.leadtime,
-                            forecast_horizon=scenario.forecast_horizon)
+                            forecast_horizon=scenario.forecast_horizon,
+                            mape=mape,
+                            rolling_mape=rolling_mape)
 
 
 @app.route('/demandgame/results', methods=['GET', 'POST'])
@@ -166,3 +188,17 @@ def get_game_data():
         raise Exception('No gameboard found')
 
     return (player, scenario, gameboard)
+
+
+def MAPE(demand, forecast):
+    """ Return the MAPE """
+    if len(demand) != len(forecast):
+        app.logger.error('In MAPE, demand and forecast have different len')
+        return -1
+
+    n = len(demand)
+    mape = 0.0
+    for d, f in zip(demand, forecast):
+        mape += abs(d - f) / d
+
+    return '{:.1f}'.format(mape * 100./ n)

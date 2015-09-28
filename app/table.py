@@ -41,6 +41,18 @@ class TableDict(object):
         else:
             return 0
 
+    def get_interval(self, row, from_period, to_period):
+        """ Return a specified interval of data as a list (from_period and to_period included) """
+        if row not in self.data['allowed']:
+            raise Exception('Row {} not recognized'.format(row))
+
+        if from_period < to_period <= self.data['num_periods']:
+            if from_period <= 0:
+                from_period = 1
+            return [self.data[row][period] for period in xrange(from_period, to_period+1)]
+        else:
+            raise Exception('Error in setting from_period ({}) and/or to_period ({})'.format(from_period, to_period))
+
 
     def print_table(self):
         print self.data['forecast']
