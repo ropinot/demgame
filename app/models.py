@@ -98,7 +98,8 @@ class Scenario(db.Model):
     frozen_horizon = db.Column(db.Integer)   # number of frozen periods
     product_cost = db.Column(db.Float)
     stock_cost = db.Column(db.Float)
-    lostsale_cost = db.Column(db.Float())
+    lostsale_cost = db.Column(db.Float)
+    order_cost = db.Column(db.Float)
     creation_date = db.Column(db.DateTime)
     activation_date = db.Column(db.DateTime)
     run_date = db.Column(db.DateTime)

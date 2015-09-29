@@ -36,6 +36,8 @@ class CreateScenarioForm(wtf.Form):
     product_cost = StringField('product_cost', default=1, validators=[DataRequired()])
     stock_cost = StringField('stock_cost', default=1, validators=[DataRequired()])
     lostsale_cost = StringField('lostsale_cost', default=1, validators=[DataRequired()])
+    order_cost = StringField('order_cost', default=10, validators=[DataRequired()])
+
     demand_profile_id = SelectField('demand_profile_id', coerce=int)
 
     # owner_id = HiddenField('owner_id', default=0) # this id must be set in the view, because current_user is not available here

@@ -106,11 +106,20 @@
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </td>
-
-                    </td>
-
                 </tr>
-
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        Order cost
+                    </td>
+                    <td>
+                        {{ form.order_cost(size=5, style='text-align:center')}} € / order
+                        {% for error in form.order_cost.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="4" align="center">
                         {% if action == "Create" %}
