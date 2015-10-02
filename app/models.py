@@ -100,6 +100,12 @@ class Scenario(db.Model):
     stock_cost = db.Column(db.Float)
     lostsale_cost = db.Column(db.Float)
     order_cost = db.Column(db.Float)
+
+    spot_cost = db.Column(db.Float)         # must be > than product_cost
+    spot_leadtime = db.Column(db.Integer)   # must be < than leadtime
+    spot_min_lotsize = db.Column(db.Integer)
+    spot_yield = db.Column(db.Float)
+
     creation_date = db.Column(db.DateTime)
     activation_date = db.Column(db.DateTime)
     run_date = db.Column(db.DateTime)

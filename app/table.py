@@ -14,7 +14,8 @@ class TableDict(object):
         self.data['sales'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['lost_sales'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['error'] = {t: 0. for t in xrange(1, num_periods+1)}
-        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received', 'sales', 'lost_sales', 'error']
+        self.data['spot'] = {t: 0. for t in xrange(1, num_periods+1)}
+        self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received', 'sales', 'lost_sales', 'error', 'spot']
         self.data['current'] = 1
 
     def __getitem__(self, key):
@@ -62,6 +63,7 @@ class TableDict(object):
         print self.data['demand']
         print self.data['sales']
         print self.data['lost_sales']
+        print self.data['spot']
 
 
     def get_HTML(self):
@@ -72,6 +74,7 @@ class TableDict(object):
 
         html += self.convert_row('received')
         html += self.convert_row('stock')
+        html += self.convert_row('spot')
         html += self.convert_row('forecast')
         html += self.convert_row('demand')
         html += self.convert_row('order')
