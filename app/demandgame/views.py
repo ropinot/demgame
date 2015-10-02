@@ -30,7 +30,7 @@ def demand_game_dashboard():
     gameboard.period += 1
 
 
-    if current_period > scenario.duration + 1:
+    if current_period >= scenario.duration + 1:
         return redirect(url_for('results_view'))
 
     # fill up the table with data to show
@@ -156,12 +156,14 @@ def results_view():
     total_sales = sum(data.data['sales'].values())
     total_lost_sales = sum(data.data['lost_sales'].values())
     total_purchase = sum(data.data['order'].values())
+    total_orders = sum([1 for o in data.data['order'].values() if o > 0.0])
 
     return render_template('/demandgame/results.html',
                             total_demand=total_demand,
                             total_sales=total_sales,
                             total_lost_sales=total_lost_sales,
-                            total_purchase=total_purchase)
+                            total_purchase=total_purchase,
+                            total_orders=total_orders)
 
 
 def get_game_data():
