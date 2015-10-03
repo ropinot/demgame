@@ -164,13 +164,15 @@ def results_view():
     total_lost_sales = sum(data.data['lost_sales'].values())
     total_purchase = sum(data.data['order'].values())
     total_orders = sum([1 for o in data.data['order'].values() if o > 0.0])
+    total_spot_orders = sum([1 for o in data.data['spot'].values() if o > 0.0])
 
     return render_template('/demandgame/results.html',
                             total_demand=total_demand,
                             total_sales=total_sales,
                             total_lost_sales=total_lost_sales,
                             total_purchase=total_purchase,
-                            total_orders=total_orders)
+                            total_orders=total_orders,
+                            total_spot_orders=total_spot_orders)
 
 
 def get_game_data():
