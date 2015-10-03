@@ -44,6 +44,13 @@ def demand_game_dashboard():
                 data.set_cell('order', current_period-1, int(form.qty.data)) # current_period - 1 because the current period has already been updated
             else:
                 app.logger.info('No order to record in period {}'.format(current_period))
+
+            if int(form.qty_spot.data) > 0:
+                app.logger.info('Record an order to spot market for {} units in period {}'.format(form.qty_spot.data, current_period))
+                data.set_cell('spot', current_period-1, int(form.qty_spot.data)) # current_period - 1 because the current period has already been updated
+            else:
+                app.logger.info('No order to spot market to record in period {}'.format(current_period))
+
         else:
             app.logger.debug('Form is NOT valid')
     except UnboundLocalError:
@@ -61,7 +68,8 @@ def demand_game_dashboard():
     # display the received quantity
     data.set_cell('received',
                    current_period,
-                   data.get_cell('order', current_period - scenario.leadtime)) # get the order of leadtime periods ago
+                   data.get_cell('order', current_period - scenario.leadtime)+\
+                   data.get_cell('spot', current_period - scenario.spot_leadtime)) # get the order of leadtime periods ago
 
     # display the stock
     if current_period == 1:
@@ -126,6 +134,7 @@ def demand_game_dashboard():
     gameboard.table = cPickle.dumps(data)
     db.session.commit()
     form.qty.data = 0
+    form.qty_spot.data = 0
 
     return render_template('demandgame/dashboard.html',
                             table=data.get_HTML(),

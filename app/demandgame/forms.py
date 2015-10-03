@@ -8,6 +8,7 @@ from sqlalchemy import and_
 
 class OrderForm(wtf.Form):
     qty = StringField('qty', default=0, validators=[DataRequired()])
+    qty_spot = StringField('qty_spot', default=0, validators=[DataRequired()])
 
     def validate_order(self):
         pass
