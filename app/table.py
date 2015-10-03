@@ -14,7 +14,7 @@ class TableDict(object):
         self.data['sales'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['lost_sales'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['error'] = {t: 0. for t in xrange(1, num_periods+1)}
-        self.data['spot'] = {t: 0. for t in xrange(1, num_periods+1)}
+        self.data['spot'] = {t: 0 for t in xrange(1, num_periods+1)}
         self.data['allowed'] = ['demand', 'stock', 'forecast', 'order', 'received', 'sales', 'lost_sales', 'error', 'spot']
         self.data['current'] = 1
 

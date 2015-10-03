@@ -28,12 +28,11 @@ class AdminLoginForm(wtf.Form):
 
 
 class CreateScenarioForm(wtf.Form):
-    # TODO: add spot cost, spot LT, spot min lot size, spot yield
     name = StringField('name', validators=[DataRequired()])
     # duration = StringField('duration', default=25, validators=[DataRequired()])
-    frozen_horizon = StringField('frozen_horizon', default=2, validators=[DataRequired()])
+    frozen_horizon = StringField('frozen_horizon', default=1, validators=[DataRequired()])
     leadtime = StringField('leadtime', default=1, validators=[DataRequired()])
-    forecast_horizon = StringField('forecast_horizon', default=1, validators=[DataRequired()])
+    forecast_horizon = StringField('forecast_horizon', default=2, validators=[DataRequired()])
 
     product_cost = StringField('product_cost', default=1, validators=[DataRequired()])
     stock_cost = StringField('stock_cost', default=1, validators=[DataRequired()])

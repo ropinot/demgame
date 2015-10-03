@@ -85,13 +85,11 @@ def demand_game_dashboard():
     lost_sales = max(0, data.get_cell('demand', current_period - 1) - (data.get_cell('stock', current_period - 1) + data.get_cell('received', current_period - 1)))
     data.set_cell('lost_sales', current_period - 1, lost_sales)
 
-    # display the forecast over the forecast horizon
-    #TODO: jitter the data beyond the frozen horizon
-    # generate the demand_jittering list with 1.0 for the frozen periods and random values beyond it
-
+    # Jittering the demand
     demand_jittering = jittering(scenario.forecast_horizon, scenario.frozen_horizon)
     app.logger.debug('jittering: {}'.format(str(demand_jittering)))
 
+    # display the forecast over the forecast horizon
     for t in xrange(scenario.forecast_horizon):
         #TODO: reduce to one query?
         demand_profile_data = demand_profile.data.filter(DemandData.period == current_period+t).first()
@@ -201,7 +199,6 @@ def MAPE(demand, forecast):
 
 def jittering(forecast_horizon, frozen_horizon):
     jittering = [1. for _ in xrange(frozen_horizon)]
-    #TODO: increase jitter according to forecast horizon
     step = 5
     for t in xrange(frozen_horizon, forecast_horizon):
         delta = randint(5*t, 5*(t+1))/100.
