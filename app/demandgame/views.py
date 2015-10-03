@@ -77,6 +77,7 @@ def demand_game_dashboard():
     else:
         previous_stock = data.get_cell('stock', current_period - 1)
         current_stock = max(0, previous_stock +\
+                               data.get_cell('spot', current_period - scenario.spot_leadtime) +\
                                data.get_cell('order', current_period - scenario.leadtime) -\
                                data.get_cell('demand', current_period-1))
 

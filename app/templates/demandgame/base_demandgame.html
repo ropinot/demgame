@@ -75,6 +75,17 @@ html, body {
             {% block content %} {% endblock %}
         </div>
     </div>
+    <div class="row clearfix" id="control">
+        <div class="col-md-3 column"  id="control_left">
+            {% block control_left %} {% endblock %}
+        </div>
+        <div class="col-md-3 column"  id="control_center">
+            {% block control_center %} {% endblock %}
+        </div>
+        <div class="col-md-6 column"  id="control_right">
+            {% block control_right %} {% endblock %}
+        </div>
+    </div>
     <div class="row clearfix" id="footer">
         <div class="col-md-12 column col-bottom" id="footer_1">
             <!--TODO: add footer-->

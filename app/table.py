@@ -67,17 +67,21 @@ class TableDict(object):
 
 
     def get_HTML(self):
-        html = '<table id="board" class="table table-striped table-condensed"><tr><th width=100px>&nbsp;</th>'
+        html = '<table id="board" class="table table-striped table-condensed"><tr><th>&nbsp;</th>'
         for t in xrange(1, self.data['num_periods']+1):
-            html += '<th width={}px>{}</th>'.format(45, t)
+            html += '<th class="text-center">{}</th>'.format(t)
+            # html += '<th width={}px>{}</th>'.format(30, t)
         html +='</tr>'
 
         html += self.convert_row('received')
         html += self.convert_row('stock')
-        html += self.convert_row('spot')
+        # html += self.separator()
         html += self.convert_row('forecast')
         html += self.convert_row('demand')
+        # html += self.separator()
         html += self.convert_row('order')
+        html += self.convert_row('spot')
+        # html += self.separator()
         html += self.convert_row('sales')
         html += self.convert_row('lost_sales')
         html += self.convert_row('error')
@@ -99,6 +103,14 @@ class TableDict(object):
                 htmlclass='past'
             _html += '<td align=right class={}>{}</td>'.format(htmlclass, self.get_cell(row, t))
         _html +='</tr>\n\r'
+        return _html
+
+    def separator(self):
+        _html = '<tr>'
+        for t in xrange(0, self.data['num_periods']+1):
+            _html +='<td></td>'
+        _html += '</tr>\n\r'
+
         return _html
 
 
