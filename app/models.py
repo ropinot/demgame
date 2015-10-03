@@ -102,6 +102,7 @@ class Scenario(db.Model):
     order_cost = db.Column(db.Float)
 
     spot_cost = db.Column(db.Float)         # must be > than product_cost
+    spot_order_cost = db.Column(db.Float)   # must be > than regular order cost
     spot_leadtime = db.Column(db.Integer)   # must be < than leadtime
     spot_min_lotsize = db.Column(db.Integer)
     spot_yield = db.Column(db.Float)

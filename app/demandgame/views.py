@@ -175,6 +175,27 @@ def results_view():
                             total_orders=total_orders,
                             total_spot_orders=total_spot_orders)
 
+@app.route('/demandgame/gamedata', methods=['GET', 'POST'])
+@login_required
+def show_game_data():
+    try:
+        player, scenario, gameboard = get_game_data()
+    except Exception as e:
+        app.logger.error(e)
+        return redirect(url_for('error_view'))
+
+    return render_template('/demandgame/game_data.html',
+                           leadtime=scenario.leadtime,
+                           product_cost=scenario.product_cost,
+                           stock_cost=scenario.stock_cost,
+                           lostsale_cost=scenario.lostsale_cost,
+                           order_cost=scenario.order_cost,
+                           spot_cost=scenario.spot_cost,
+                           spot_order_cost=scenario.spot_order_cost,
+                           spot_leadtime=scenario.spot_leadtime,
+                           spot_min_lotsize=scenario.spot_min_lotsize,
+                           spot_yield=scenario.spot_yield)
+
 
 def get_game_data():
     """ Get the data about the player, the scenario and the gameboard """

@@ -1,7 +1,11 @@
 {%  extends "demandgame/base_demandgame.html" %}
 
 {% block content %}
-<h4> Demand & production planning dashboard</h4>
+<div>
+    <br/>
+    <div style="float:left"><h4 style="display: inline"> Demand & production planning dashboard</h4></div>
+    <div style="float:right"><a href="{{ url_for('player_home_view') }}" class="btn btn-default"> Exit game </a></div>
+</div>
 <style>
 .current{
     background-color: lightgreen;
@@ -25,13 +29,15 @@ td{
 
 {{ table | safe}}
 
-
-<br/>
 {% endblock %}
 
 {% block control_left %}
 <center>
     <table border=0 class="table table-striped" >
+        <tr>
+            <td>Current period</td>
+            <td align='center'>{{ period }}</td>
+        </tr>
         <tr>
             <td>MAPE</td>
             <td align="center">{{ mape }} %</td>
@@ -41,11 +47,9 @@ td{
             <td align="center">{{ rolling_mape }} %</td>
         </tr>
     </table>
-    <table border=0 class="table table-striped">
-        <tr><td>Current period</td><td align='center'>{{ period }}</td></tr>
-        <tr><td>Lead time</td><td align='center'>{{ leadtime }}</td></tr>
-        <tr><td>Forecasting horizon</td><td align='center'>{{ forecast_horizon }}</td></tr>
-    </table>
+
+    <a href="{{ url_for('show_game_data') }}" class="btn btn-default" target="_blank"> Game data </a>
+
 </center>
 {% endblock %}
 

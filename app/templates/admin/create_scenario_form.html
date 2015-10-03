@@ -136,6 +136,19 @@
                 <tr>
                     <td>&nbsp;</td>
                     <td>
+                        Spot market order cost
+                    </td>
+                    <td>
+                        {{ form.spot_order_cost(size=5, style='text-align:center')}} € / unit
+                        {% for error in form.spot_order_cost.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
                         Spot market lead time
                     </td>
                     <td>

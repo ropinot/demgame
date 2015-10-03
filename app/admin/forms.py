@@ -40,6 +40,7 @@ class CreateScenarioForm(wtf.Form):
     order_cost = StringField('order_cost', default=10., validators=[DataRequired()])
 
     spot_cost = StringField('spot_cost', default=2., validators=[DataRequired()])
+    spot_order_cost = StringField('spot_order_cost', default=20., validators=[DataRequired()])
     spot_leadtime = StringField('spot_leadtime', default=1, validators=[DataRequired()])
     spot_min_lotsize = StringField('spot_min_lotsize', default=0, validators=[DataRequired()])
     spot_yield = StringField('spot_yield', default=100., validators=[DataRequired()])
