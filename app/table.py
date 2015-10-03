@@ -67,7 +67,7 @@ class TableDict(object):
 
 
     def get_HTML(self):
-        html = '<table id="board" ><tr><th width=100px>&nbsp;</th>'
+        html = '<table id="board" class="table table-striped table-condensed"><tr><th width=100px>&nbsp;</th>'
         for t in xrange(1, self.data['num_periods']+1):
             html += '<th width={}px>{}</th>'.format(45, t)
         html +='</tr>'
