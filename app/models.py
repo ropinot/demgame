@@ -96,6 +96,8 @@ class Scenario(db.Model):
     leadtime = db.Column(db.Integer)    # from order to receipt (1 = today for tomorrow)
     forecast_horizon = db.Column(db.Integer) # number of forecasts visible
     frozen_horizon = db.Column(db.Integer)   # number of frozen periods
+
+    selling_price = db.Column(db.Float)
     product_cost = db.Column(db.Float)
     stock_cost = db.Column(db.Float)
     lostsale_cost = db.Column(db.Float)

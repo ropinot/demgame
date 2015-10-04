@@ -160,20 +160,51 @@ def results_view():
 
     data = cPickle.loads(str(gameboard.table))
 
-    total_demand = sum(map(int, data.data['demand'].values()))
+    # total_demand = sum(map(int, data.data['demand'].values()))
     total_sales = sum(data.data['sales'].values())
-    total_lost_sales = sum(data.data['lost_sales'].values())
-    total_purchase = sum(data.data['order'].values())
+    total_lostsales = sum(data.data['lost_sales'].values())
+    total_regular_purchase = sum(data.data['order'].values())
+    total_spot_purchase = sum(data.data['spot'].values())
     total_orders = sum([1 for o in data.data['order'].values() if o > 0.0])
     total_spot_orders = sum([1 for o in data.data['spot'].values() if o > 0.0])
 
+    revenue = total_sales * scenario.selling_price
+    total_regular_purchase_cost = total_regular_purchase * scenario.product_cost
+    total_spot_purchase_cost = total_spot_purchase * scenario.spot_cost
+    total_lostsales_cost = total_lostsales * scenario.lostsale_cost
+    total_regular_order_cost = total_orders * scenario.order_cost
+    total_spot_order_cost = total_spot_orders * scenario.spot_order_cost
+
+    profit = revenue - \
+             total_regular_purchase_cost -\
+             total_spot_purchase_cost -\
+             total_lostsales_cost -\
+             total_regular_order_cost -\
+             total_spot_order_cost
+
+
     return render_template('/demandgame/results.html',
-                            total_demand=total_demand,
+                            revenue=revenue,
+                            selling_price=scenario.selling_price,
+                            regular_purchase_cost=scenario.product_cost,
+                            regular_order_cost=scenario.order_cost,
+                            spot_purchase_cost=scenario.spot_cost,
+                            spot_order_cost=scenario.spot_order_cost,
+                            stock_cost=scenario.stock_cost,
+                            lostsale_cost=scenario.lostsale_cost,
                             total_sales=total_sales,
-                            total_lost_sales=total_lost_sales,
-                            total_purchase=total_purchase,
+                            total_lostsales=total_lostsales,
+                            total_regular_purchase=total_regular_purchase,
+                            total_spot_purchase=total_spot_purchase,
                             total_orders=total_orders,
-                            total_spot_orders=total_spot_orders)
+                            total_spot_orders=total_spot_orders,
+                            profit=profit,
+                            total_regular_purchase_cost=total_regular_purchase_cost,
+                            total_spot_purchase_cost=total_spot_purchase_cost,
+                            total_lostsales_cost=total_lostsales_cost,
+                            total_regular_order_cost=total_regular_order_cost,
+                            total_spot_order_cost=total_spot_order_cost
+                            )
 
 @app.route('/demandgame/gamedata', methods=['GET', 'POST'])
 @login_required
