@@ -144,7 +144,9 @@ def demand_game_dashboard():
                             leadtime=scenario.leadtime,
                             forecast_horizon=scenario.forecast_horizon,
                             mape=mape,
-                            rolling_mape=rolling_mape)
+                            rolling_mape=rolling_mape,
+                            regular_LT=scenario.leadtime,
+                            spot_LT=scenario.spot_leadtime)
 
 
 @app.route('/demandgame/results', methods=['GET', 'POST'])
@@ -225,6 +227,12 @@ def show_game_data():
                            spot_leadtime=scenario.spot_leadtime,
                            spot_min_lotsize=scenario.spot_min_lotsize,
                            spot_yield=scenario.spot_yield)
+
+
+@app.route('/demandgame/gameinstructions', methods=['GET', 'POST'])
+@login_required
+def show_game_instructions():
+    return render_template('/demandgame/game_instructions.html')
 
 
 def get_game_data():

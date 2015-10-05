@@ -49,6 +49,7 @@ td{
     </table>
 
     <a href="{{ url_for('show_game_data') }}" class="btn btn-default" target="_blank"> Game data </a>
+    <a href="{{ url_for('show_game_instructions') }}" class="btn btn-default" target="_blank"> Game instructions </a>
 
 </center>
 {% endblock %}
@@ -60,8 +61,8 @@ td{
         <table class="table" >
             <tr style="align:center">
                 <th style="border:0">&nbsp;</th>
-                <th class="text-center">From regular supplier</th>
-                <th class="text-center">From spot market</th>
+                <th class="text-center">From regular supplier<br/>(LT: {{ regular_LT }} period(s))</th>
+                <th class="text-center">From spot market<br/>(LT: {{ spot_LT }} period(s))</th>
             </tr>
             <tr>
                 <td>
