@@ -29,7 +29,7 @@ class AdminLoginForm(wtf.Form):
 
 class CreateScenarioForm(wtf.Form):
     name = StringField('name', validators=[DataRequired()])
-    # duration = StringField('duration', default=25, validators=[DataRequired()])
+    selling_price = StringField('selling_price', default=10., validators=[DataRequired()])
     frozen_horizon = StringField('frozen_horizon', default=1, validators=[DataRequired()])
     leadtime = StringField('leadtime', default=1, validators=[DataRequired()])
     forecast_horizon = StringField('forecast_horizon', default=2, validators=[DataRequired()])

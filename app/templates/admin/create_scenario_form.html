@@ -6,7 +6,7 @@
         <center><form method="POST" action="{{ url_for('create_new_scenario_view') }}">
             {{ form.hidden_tag() }}
             {{ form.crsf_token }}
-            <table width="60%" cellpadding="10" cellspacing="10" class="table">
+            <table class="table" border=0>
                 <tr>
                     <td>&nbsp;</td>
                     <td>
@@ -19,14 +19,13 @@
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </td>
-                    <td>&nbsp;</td>
                 </tr>
                 <tr>
-                        <td>&nbsp;</td>
-                        <td>
+                    <td>&nbsp;</td>
+                    <td>
                         Demand profile
-                        </td>
-                        <td colspan="2">
+                    </td>
+                    <td>
                         {{ form.demand_profile_id }}
                         {% for error in form.demand_profile_id.errors %}
                         <br/>
@@ -39,7 +38,7 @@
                     <td>
                         Frozen horizon
                     </td>
-                    <td colspan="2">
+                    <td>
                         {{ form.frozen_horizon(size=5, style='text-align:center')}} periods
                         {% for error in form.frozen_horizon.errors %}
                         <br/>
@@ -69,7 +68,17 @@
                         {% endfor %}
                     </td>
                 </tr>
-
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>Selling price</td>
+                    <td>
+                        {{ form.selling_price(size=5, style='text-align:center') }} € / unit
+                        {% for error in form.selling_price.errors %}
+                        <br/>
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td>
