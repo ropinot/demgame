@@ -160,7 +160,7 @@ def results_view():
 
     data = cPickle.loads(str(gameboard.table))
 
-    # total_demand = sum(map(int, data.data['demand'].values()))
+    total_demand = sum(map(int, data.data['demand'].values()))
     total_sales = sum(data.data['sales'].values())
     total_lostsales = sum(data.data['lost_sales'].values())
     total_regular_purchase = sum(data.data['order'].values())
@@ -181,7 +181,6 @@ def results_view():
              total_lostsales_cost -\
              total_regular_order_cost -\
              total_spot_order_cost
-
 
     return render_template('/demandgame/results.html',
                             revenue=revenue,
