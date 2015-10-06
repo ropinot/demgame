@@ -114,22 +114,28 @@ def demand_game_dashboard():
 
     mape = 0.0
     rolling_mape = 0.0
+    me = 0.0
+    rolling_me = 0.0
     if current_period > 1:
-        # get data for the MAPE
+        # get data for the MAPE and the ME
         demand_all = data.get_interval('demand', 0, current_period-1)
         forecast_all = data.get_interval('forecast', 0, current_period-1)
         app.logger.debug('demand all: {}'.format(str(demand_all)))
         app.logger.debug('forecast all: {}'.format(str(forecast_all)))
         mape = float(MAPE(demand_all, forecast_all))
+        me = float(ME(demand_all, forecast_all))
         app.logger.info('MAPE: {} %'.format(mape))
+        app.logger.info('ME: {} %'.format(me))
 
-        # get data for the rolling MAPE (3 periods)
+        # get data for the rolling MAPE and ME (3 periods)
         demand_3_periods = data.get_interval('demand', current_period - 3, current_period-1)
         forecast_3_periods = data.get_interval('forecast', current_period - 3, current_period-1)
         app.logger.debug('demand 3: {}'.format(str(demand_3_periods)))
         app.logger.debug('forecast 3: {}'.format(str(forecast_3_periods)))
         rolling_mape = float(MAPE(demand_3_periods, forecast_3_periods))
+        rolling_me = float(ME(demand_3_periods, forecast_3_periods))
         app.logger.info('ROLLING MAPE: {} %'.format(mape))
+        app.logger.info('ROLLING ME: {} %'.format(me))
 
     # save the updated table on DB
     gameboard.table = cPickle.dumps(data)
@@ -144,7 +150,9 @@ def demand_game_dashboard():
                             leadtime=scenario.leadtime,
                             forecast_horizon=scenario.forecast_horizon,
                             mape=mape,
+                            me=me,
                             rolling_mape=rolling_mape,
+                            rolling_me=rolling_me,
                             regular_LT=scenario.leadtime,
                             spot_LT=scenario.spot_leadtime)
 
@@ -257,7 +265,7 @@ def get_game_data():
 def MAPE(demand, forecast):
     """ Return the MAPE """
     if len(demand) != len(forecast):
-        app.logger.error('In MAPE, demand and forecast have different len')
+        app.logger.error('In MAPE, demand and forecast have different lenght')
         return -1
 
     n = len(demand)
@@ -266,6 +274,20 @@ def MAPE(demand, forecast):
         mape += abs(d - f) / d
 
     return '{:.1f}'.format(mape * 100./ n)
+
+
+def ME(demand, forecast):
+    """ Return the ME """
+    if len(demand) != len(forecast):
+        app.logger.error('In ME, demand and forecast have different lenght')
+        return -1
+
+    n = len(demand)
+    me = 0.0
+    for d, f in zip(demand, forecast):
+        me += d - f
+
+    return '{:.1f}'.format(me)
 
 
 def jittering(forecast_horizon, frozen_horizon):

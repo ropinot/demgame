@@ -39,12 +39,20 @@ td{
             <td align='center'>{{ period }}</td>
         </tr>
         <tr>
-            <td>MAPE</td>
+            <td>Mean Absolute % Error (MAPE)</td>
             <td align="center">{{ mape }} %</td>
         </tr>
         <tr>
             <td>Rolling MAPE (3 periods)</td>
             <td align="center">{{ rolling_mape }} %</td>
+        </tr>
+        <tr>
+            <td>Mean error (ME)</td>
+            <td align="center">{{ me }} units</td>
+        </tr>
+        <tr>
+            <td>Rolling ME (3 periods)</td>
+            <td align="center">{{ rolling_me }} units</td>
         </tr>
     </table>
 
