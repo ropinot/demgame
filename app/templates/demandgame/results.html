@@ -1,0 +1,54 @@
+{%  extends "demandgame/base_demandgame.html" %}
+
+{% block content %}
+<center>
+    <h3>Game results</h3>
+    <br/>
+        <div style="width: 50%">
+            <table class="table table-striped">
+                <tr><td colspan=3><div class="text-center"><h4>Revenues</h4></div></td></tr>
+                <tr>
+                    <td>Total sales</td>
+                    <td>{{ total_sales }} units <br/>(@ {{ selling_price }} €/unit)</td>
+                    <td>{{ revenue }} €</td>
+                </tr>
+
+                <tr><td colspan=3><div class="text-center"><h4>Costs</h4></div></td></tr>
+
+                <tr>
+                    <td>Total regular purchase</td>
+                    <td>{{ total_regular_purchase }} units<br/>(@ {{ regular_purchase_cost }} € / unit)</td>
+                    <td>-{{ total_regular_purchase * regular_purchase_cost }} €</td>
+                </tr>
+                <tr>
+                    <td>Total spot purchase</td>
+                    <td>{{ total_spot_purchase }} units<br/>(@ {{ spot_purchase_cost }} € / unit)</td>
+                    <td>-{{ total_spot_purchase * spot_purchase_cost }} €</td>
+                </tr>
+                <tr>
+                    <td>Total lost sales</td>
+                    <td>{{ total_lostsales }} units<br/>(@ {{ lostsale_cost }} € / unit)</td>
+                    <td>-{{ total_lostsales * lostsale_cost }} €</td>
+                </tr>
+                <tr>
+                    <td>Number of regular orders</td>
+                    <td>{{ total_orders }} order(s)<br/>(@ {{ regular_order_cost }} € / order)</td>
+                    <td>-{{ total_orders * regular_order_cost }} €</td>
+                </tr>
+                <tr>
+                    <td>Number of spot orders</td>
+                    <td>{{ total_spot_orders }} order(s)<br/>(@ {{ spot_order_cost }} € / order)</td>
+                    <td>-{{ total_spot_orders * spot_order_cost }} €</td>
+                </tr>
+
+                <tr><td colspan=3><div class="text-center"><h4>Profit/loss</h4></div></td></tr>
+                <tr>
+                    <td>Profit/loss</td>
+                    <td></td>
+                    <td>{{ profit }} €</td>
+                </tr>
+            </table>
+        </div>
+    <a href="{{ url_for('player_home_view') }}" class="btn btn-default">Home</a>
+</center>
+{% endblock %}
