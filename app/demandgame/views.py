@@ -66,10 +66,15 @@ def demand_game_dashboard():
     data.set_cell('demand', current_period-1, demand_profile_data.demand)
 
     # display the received quantity
+    # the spot quantity is netted from the scrap quantity
+    # TODO: separate the spot receive from regular receive?
+    gross_spot_order = data.get_cell('spot', current_period - scenario.spot_leadtime) # get the order of leadtime periods ago
+    net_spot_order = int(gross_spot_order * randint(int(scenario.spot_yield), 100)/100.)
+
     data.set_cell('received',
                    current_period,
                    data.get_cell('order', current_period - scenario.leadtime)+\
-                   data.get_cell('spot', current_period - scenario.spot_leadtime)) # get the order of leadtime periods ago
+                   net_spot_order)
 
     # display the stock
     if current_period == 1:
