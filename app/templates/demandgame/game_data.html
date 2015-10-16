@@ -3,66 +3,114 @@
 {% block content %}
 <center>
     <h3>Game data</h3>
-    <div style='width:40%'>
-        <table class="table table-striped">
+    <div style='width:80%'>
+        <table class="table">
             <tr>
-                <td class="text-center" colspan=3><h4>Regular supplier</h4></td>
+                <td>
+                    <table class="table table-striped">
+                        <tr>
+                            <td class="text-center" colspan=3><h4>Planning data</h4></td>
+                        </tr>
+                        <tr>
+                            <td>Planning horizon</td>
+                            <td>{{ forecast_horizon }}</td>
+                            <td>Periods</td>
+                        </tr>
+                        <tr>
+                            <td>Frozen horizon</td>
+                            <td>{{ frozen_horizon }}</td>
+                            <td>Periods</td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table class="table table-striped">
+                        <tr>
+                            <td class="text-center" colspan=3><h4>General cost data</h4></td>
+                        </tr>
+                        <tr>
+                            <td>Stock holding cost</td>
+                            <td>{{ stock_cost }}</td>
+                            <td>€ / unit period</td>
+                        </tr>
+                        <tr>
+                            <td>Lost sales cost</td>
+                            <td>{{ lostsale_cost }} </td>
+                            <td>€ / unit</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
             <tr>
-                <td>Regular supplier lead time</td>
-                <td>{{ leadtime }}</td>
-                <td>Periods</td>
-            </tr>
-            <tr>
-                <td>Regular purchasing cost</td>
-                <td>{{ product_cost }}</td>
-                <td>€ / unit</td>
-            </tr>
-            <tr>
-                <td>Stock holding cost</td>
-                <td>{{ stock_cost }}</td>
-                <td>€ / unit period</td>
-            </tr>
-            <tr>
-                <td>Lost sales cost</td>
-                <td>{{ lostsale_cost }} </td>
-                <td>€ / unit</td>
-            </tr>
-            <tr>
-                <td>Order cost</td>
-                <td>{{ order_cost }}</td>
-                <td>€ / order</td>
-            </tr>
-            <tr>
-                <td class="text-center" colspan=3><h4>Spot market</h4></td>
-            </tr>
-            <tr>
-                <td>Spot purchasing cost</td>
-                <td>{{ spot_cost }}</td>
-                <td>€ / unit</td>
-            </tr>
-            <tr>
-                <td>Spot order cost</td>
-                <td>{{ spot_order_cost }}</td>
-                <td>€ / order </td>
-            </tr>
-            <tr>
-                <td>Spot supplier lead time</td>
-                <td>{{ spot_leadtime }}</td>
-                <td>Periods</td>
-            </tr>
-            <tr>
-                <td>Minimum purchase size</td>
-                <td>{{ spot_min_lotsize }}</td>
-                <td>units</td>
-            </tr>
-            <tr>
-                <td>Spot supplier yield</td>
-                <td>{{ spot_yield }} </td>
-                <td>%</td>
+                <td>
+                    <table class="table table-striped">
+                        <tr>
+                            <td class="text-center" colspan=3><h4>Regular supplier</h4></td>
+                        </tr>
+                        <tr>
+                            <td>Regular supplier lead time</td>
+                            <td>{{ leadtime }}</td>
+                            <td>Periods</td>
+                        </tr>
+                        <tr>
+                            <td>Regular purchasing cost</td>
+                            <td>{{ product_cost }}</td>
+                            <td>€ / unit</td>
+                        </tr>
+                        <tr>
+                            <td>Order cost</td>
+                            <td>{{ order_cost }}</td>
+                            <td>€ / order</td>
+                        </tr>
+                        <tr>
+                            <td>Minimum purchase size</td>
+                            <td>0</td>
+                            <td>units</td>
+                        </tr>
+                        <tr>
+                            <td>Regular supplier yield</td>
+                            <td>100.0</td>
+                            <td>%</td>
+                        </tr>
+
+                    </table>
+                </td>
+                <td>
+                    <table class="table table-striped">
+                        <tr>
+                            <td class="text-center" colspan=3><h4>Spot market</h4></td>
+                        </tr>
+                        <tr>
+                            <td>Spot supplier lead time</td>
+                            <td>{{ spot_leadtime }}</td>
+                            <td>Periods</td>
+                        </tr>
+                        <tr>
+                            <td>Spot purchasing cost</td>
+                            <td>{{ spot_cost }}</td>
+                            <td>€ / unit</td>
+                        </tr>
+                        <tr>
+                            <td>Spot order cost</td>
+                            <td>{{ spot_order_cost }}</td>
+                            <td>€ / order </td>
+                        </tr>
+                        <tr>
+                            <td>Minimum purchase size</td>
+                            <td>{{ spot_min_lotsize }}</td>
+                            <td>units</td>
+                        </tr>
+                        <tr>
+                            <td>Spot supplier yield</td>
+                            <td>{{ spot_yield }} </td>
+                            <td>%</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         </table>
     </div>
+
     <input class="btn btn-default" type="button" value="Close" onclick="self.close()" />
 </center>
 

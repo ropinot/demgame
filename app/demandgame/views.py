@@ -225,6 +225,8 @@ def show_game_data():
         return redirect(url_for('error_view'))
 
     return render_template('/demandgame/game_data.html',
+                           forecast_horizon=scenario.forecast_horizon,
+                           frozen_horizon=scenario.frozen_horizon,
                            leadtime=scenario.leadtime,
                            product_cost=scenario.product_cost,
                            stock_cost=scenario.stock_cost,

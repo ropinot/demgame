@@ -1,6 +1,43 @@
 {% extends "demandgame/base_demandgame.html" %}
 
 {% block content %}
+<h3>Game instructions</h3>
+<h4>Dashboard components</h4>
+<center>
+    <img src="/static/img/game_instructions.png" style="width: 80%; height: 80%"/>
+</center>
+
+<p>
+The planning information in the dashboard are (per each period):
+    <ul>
+        <li><strong>Received:</strong> quantity ordered in the past and received at the beginning of the period (depends on regular and spot leadtimes).</li>
+        <li><strong>Stock:</strong> quantity on hand at the beginning of the period, including the quantity received in the period (see <i><strong>RECEIVED</strong></i>)</li>
+        <li><strong>Forecast:</strong> forecast over some periods</li>
+        <li><strong>Demand:</strong> actual demand </li>
+        <li><strong>Order:</strong> quantity ordered from the regular supplier </li>
+        <li><strong>Spot:</strong> quantity ordered from tbe spot supplier </li>
+        <li><strong>Sales:</strong> actual sales </li>
+        <li><strong>Lost sales:</strong> unsatisfied demand </li>
+        <li><strong>Error:</strong> forecasting error </li>
+    </ul>
+<br/>
+</p>
+<h4>Game parameters</h4>
+<p>
+    The game uses the following parameters (see also the <a href="{{ url_for('show_game_data') }}" class="btn btn-default" target="_blank"> Game data </a>):
+    <ul>
+        <li><strong>Selling price:</strong> price per unit to the final customer.</li>
+        <li><strong>Regular/spot supplier lead time:</strong> number of periods from the order to the goods receipt (i.e. 1 periods = order today and receive tomorrow).</li>
+        <li><strong>Regular/spot purchasing cost:</strong> price per unit paid to the suppliers.</li>
+        <li><strong>Stock holding cost:</strong> unit cost per period for on-hand material</li>
+        <li><strong>Lost sales cost:</strong> cost per unit of lost sales, computed as the difference between the demand in the period and the quantity on-hand at the beginning of the period.</li>
+        <li><strong>Regular/spot order cost:</strong> cost for each order</li>
+        <li><strong>Minimum purchase size:</strong> minimum size of the order accepted by the supplier.</li>
+        <li><strong>Spot supplier yield:</strong> percentage of the ordered quantity delivered on average by the spot supplier.</li>
+        <li><strong>Forecast horizon:</strong> number of periods for which the forecast is available (1 = current period).</li>
+        <li><strong>Frozen horizon:</strong> number of periods in the forecast horizon for which the forecast is frozen (i.e. does not change over time; 1 = current period frozen).</li>
+    </ul>
+</p>
 
 <center>
     <input class="btn btn-default" type="button" value="Close" onclick="self.close()">
