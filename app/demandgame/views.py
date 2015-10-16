@@ -22,8 +22,8 @@ def demand_game_dashboard():
         app.logger.error(e)
         return redirect(url_for('error_view'))
 
-    #TODO: define a method in the Gameboard model to return the table
-    #TEST: create a test before
+    # TODO: show the current revenue in the dashboard?
+    # TODO: define a method in the Gameboard model to return the table
     data = cPickle.loads(str(gameboard.table))
     current_period = gameboard.period
     data.set_current(gameboard.period)
@@ -230,6 +230,7 @@ def show_game_data():
         return redirect(url_for('error_view'))
 
     return render_template('/demandgame/game_data.html',
+                           selling_price=scenario.selling_price,
                            forecast_horizon=scenario.forecast_horizon,
                            frozen_horizon=scenario.frozen_horizon,
                            leadtime=scenario.leadtime,
